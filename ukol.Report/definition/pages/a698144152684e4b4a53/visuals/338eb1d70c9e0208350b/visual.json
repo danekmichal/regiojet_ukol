@@ -3,10 +3,10 @@
   "name": "338eb1d70c9e0208350b",
   "position": {
     "x": 44,
-    "y": 42,
+    "y": 32,
     "z": 1,
-    "height": 44,
-    "width": 520,
+    "height": 64,
+    "width": 680,
     "tabOrder": 1
   },
   "visual": {
@@ -19,10 +19,24 @@
               {
                 "textRuns": [
                   {
-                    "value": "REGIOJET",
+                    "value": "PŘEHLED OBJEDNÁVEK & MARKETINGOVÝCH KAMPANÍ",
                     "textStyle": {
                       "fontWeight": "bold",
-                      "fontSize": "14pt"
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "16pt",
+                      "color": "#1E1E1E"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Performance přehled rezervací, nákladovosti (CPA), konverzního poměru (CR %) a akvizičních zdrojů",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "9.5pt",
+                      "color": "#64748B"
                     }
                   }
                 ]

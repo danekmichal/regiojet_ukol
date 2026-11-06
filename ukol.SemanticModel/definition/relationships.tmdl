@@ -50,3 +50,13 @@ relationship 36af716d-0367-4b12-b8d8-67828e820091
 	fromColumn: dataGA.date
 	toColumn: LocalDateTable_945d1668-b0ab-4a0d-bb57-9d23666dfa01.Date
 
+relationship a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d
+	fromColumn: dataAds.sessionCampaignName
+	toColumn: Dim_Campaign.sessionCampaignName
+
+relationship b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e
+	crossFilteringBehavior: bothDirections
+	fromColumn: dataGA.sessionCampaignName
+	toColumn: Dim_Campaign.sessionCampaignName
+
+

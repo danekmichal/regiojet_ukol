@@ -12,6 +12,7 @@ table datadestinace
 
 	column nazev
 		dataType: string
+		dataCategory: Place
 		lineageTag: 7833e84a-13b0-47f0-bfbe-504e10636b6f
 		summarizeBy: none
 		sourceColumn: nazev

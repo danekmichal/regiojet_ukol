@@ -1,0 +1,30 @@
+table Dim_Campaign
+	lineageTag: 9f4d8a12-3c5b-4e7a-8b91-2d6e5f4a3b2c
+
+	column sessionCampaignName
+		dataType: string
+		isKey
+		lineageTag: 3a2b1c4d-5e6f-4a8b-9c0d-1e2f3a4b5c6d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [sessionCampaignName]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Campaign = calculated
+		mode: import
+		source =
+				DISTINCT (
+				    FILTER (
+				        UNION (
+				            SELECTCOLUMNS ( dataAds, "sessionCampaignName", dataAds[sessionCampaignName] ),
+				            SELECTCOLUMNS ( dataGA, "sessionCampaignName", dataGA[sessionCampaignName] )
+				        ),
+				        NOT ISBLANK ( [sessionCampaignName] )
+				            && [sessionCampaignName] <> "(not set)"
+				            && LEN ( TRIM ( [sessionCampaignName] ) ) > 0
+				    )
+				)
+
+	annotation PBI_Id = 8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f
+

@@ -1,0 +1,111 @@
+table _Measures
+	lineageTag: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6e
+
+	measure 'Pocet Objednavek (CRM)' = DISTINCTCOUNT(dataCRM[id_rezervace])
+		formatString: #,0
+		displayFolder: 01. Objednávky & Letenky
+		lineageTag: m0000001-0000-4000-8000-000000000001
+
+	measure 'Pocet Objednavek (GA)' =
+			CALCULATE(
+			    DISTINCTCOUNT(dataGA[customEvent:rezervacni_kod]),
+			    dataGA[customEvent:rezervacni_kod] <> BLANK(),
+			    dataGA[customEvent:rezervacni_kod] <> "(not set)"
+			)
+		formatString: #,0
+		displayFolder: 01. Objednávky & Letenky
+		lineageTag: m0000002-0000-4000-8000-000000000002
+
+	measure 'Pocet Letenek' = COUNTROWS(dataLet)
+		formatString: #,0
+		displayFolder: 01. Objednávky & Letenky
+		lineageTag: m0000003-0000-4000-8000-000000000003
+
+	measure 'Pocet Kampani' = DISTINCTCOUNTNOBLANK(dataAds[sessionCampaignName])
+		formatString: #,0
+		displayFolder: 02. Marketing & Ads
+		lineageTag: m0000004-0000-4000-8000-000000000004
+
+	measure 'Naklady Ads' = SUM(dataAds[AdsCost])
+		formatString: #,0 "Kč"
+		displayFolder: 02. Marketing & Ads
+		lineageTag: m0000005-0000-4000-8000-000000000005
+
+	measure 'Kliky Ads' = SUM(dataAds[AdsClicks])
+		formatString: #,0
+		displayFolder: 02. Marketing & Ads
+		lineageTag: m0000006-0000-4000-8000-000000000006
+
+	measure CPA = DIVIDE([Naklady Ads], [Pocet Objednavek (CRM)], BLANK())
+		formatString: #,0.00 "Kč"
+		displayFolder: 02. Marketing & Ads
+		lineageTag: m0000007-0000-4000-8000-000000000007
+
+	measure 'CR %' = DIVIDE([Pocet Objednavek (CRM)], [Kliky Ads], BLANK())
+		formatString: 0.00 %
+		displayFolder: 02. Marketing & Ads
+		lineageTag: m0000008-0000-4000-8000-000000000008
+
+	measure 'Objednavky PM' = CALCULATE([Pocet Objednavek (CRM)], DATEADD('Dim_Date'[Date], -1, MONTH))
+		formatString: #,0
+		displayFolder: 03. Time Intelligence (MoM)
+		lineageTag: m0000009-0000-4000-8000-000000000009
+
+	measure 'Objednavky MoM Abs' =
+			VAR _Current = [Pocet Objednavek (CRM)]
+			VAR _Prev = [Objednavky PM]
+			RETURN
+			    IF(NOT ISBLANK(_Current) && NOT ISBLANK(_Prev), _Current - _Prev, BLANK())
+		formatString: +#,0;-#,0;0
+		displayFolder: 03. Time Intelligence (MoM)
+		lineageTag: m0000010-0000-4000-8000-000000000010
+
+	measure 'Objednavky MoM %' = DIVIDE([Objednavky MoM Abs], [Objednavky PM], BLANK())
+		formatString: +0.0 %;-0.0 %;0.0 %
+		displayFolder: 03. Time Intelligence (MoM)
+		lineageTag: m0000011-0000-4000-8000-000000000011
+
+	measure 'MoM Trend Indikator' =
+			VAR _DeltaPct = [Objednavky MoM %]
+			VAR _DeltaAbs = [Objednavky MoM Abs]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_DeltaPct), "— (bez historie)",
+			        _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (+" & FORMAT(_DeltaAbs, "#,0") & ")",
+			        _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (" & FORMAT(_DeltaAbs, "#,0") & ")",
+			        "▬ 0.0 % (0)"
+			    )
+		displayFolder: 03. Time Intelligence (MoM)
+		lineageTag: m0000012-0000-4000-8000-000000000012
+
+	measure 'MoM Barva' =
+			VAR _DeltaPct = [Objednavky MoM %]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_DeltaPct), "#64748B",
+			        _DeltaPct > 0, "#10B981",
+			        _DeltaPct < 0, "#EF4444",
+			        "#F59E0B"
+			    )
+		displayFolder: 03. Time Intelligence (MoM)
+		lineageTag: m0000013-0000-4000-8000-000000000013
+
+	column Value
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: c0000001-0000-4000-8000-000000000001
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Value]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = calculated
+		mode: import
+		source = {1}
+
+	annotation PBI_Id = f1e2d3c4b5a697887766554433221100
+

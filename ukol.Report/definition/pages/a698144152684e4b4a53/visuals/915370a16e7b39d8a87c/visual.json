@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "915370a16e7b39d8a87c",
   "position": {
-    "x": 620,
-    "y": 38,
+    "x": 740,
+    "y": 32,
     "z": 2,
-    "height": 52,
-    "width": 280,
+    "height": 64,
+    "width": 270,
     "tabOrder": 2
   },
   "visual": {
@@ -27,7 +27,7 @@
                 }
               },
               "queryRef": "Dim_Date.RokMesicText",
-              "nativeQueryRef": "RokMesicText",
+              "nativeQueryRef": "Měsíc / Rok",
               "active": true
             }
           ]
@@ -47,26 +47,28 @@
             }
           }
         }
+      ],
+      "header": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "title": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Měsíc / Rok'"
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "076d85eb2e1446b90618",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "Dim_Date"
-              }
-            },
-            "Property": "RokMesicText"
-          }
-        },
-        "type": "Categorical"
-      }
-    ]
   }
 }

@@ -38,6 +38,7 @@ table Dim_Date
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Mesic]
+		sortByColumn: CisloMesice
 
 		annotation SummarizationSetBy = Automatic
 
@@ -46,13 +47,14 @@ table Dim_Date
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [MesicZkracene]
+		sortByColumn: CisloMesice
 
 		annotation SummarizationSetBy = Automatic
 
 	column RokMesicKod
 		formatString: 0
 		lineageTag: cd438703-f08f-45ab-9ca7-6a56eec4e64b
-		summarizeBy: sum
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [RokMesicKod]
 
@@ -63,6 +65,7 @@ table Dim_Date
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [RokMesicText]
+		sortByColumn: RokMesicKod
 
 		annotation SummarizationSetBy = Automatic
 
