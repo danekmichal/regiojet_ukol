@@ -1,0 +1,43 @@
+table dataItiner
+	lineageTag: 83a6d6b2-ca4e-4cfe-ba4f-59d8ec13b849
+
+	column id_letenka
+		dataType: int64
+		formatString: 0
+		lineageTag: de8c7db4-a7d6-45c1-9f2b-9f8a4dd55142
+		summarizeBy: none
+		sourceColumn: id_letenka
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'First id_from'
+		dataType: int64
+		formatString: 0
+		lineageTag: 7fc5b65d-7aec-4f7b-a1bb-93a8dcaab7d5
+		summarizeBy: sum
+		sourceColumn: First id_from
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Last id_to'
+		dataType: int64
+		formatString: 0
+		lineageTag: 6afb139d-0842-4283-9b0f-3d9144ba3c2a
+		summarizeBy: none
+		sourceColumn: Last id_to
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dataItiner = m
+		mode: import
+		source =
+				let
+				    Source = Python.Execute("import sqlite3#(lf)import pandas as pd#(lf)#(lf)# Nahraďte přesnou cestou k vašemu souboru test_db.db#(lf)db_path = r'F:\stažené soubory\regiorepo\test_db.db'#(lf)#(lf)conn = sqlite3.connect(db_path)#(lf)#(lf)# Získání seznamu všech reálných tabulek (vynechá systémové sqlite tabulky a případné demo)#(lf)cursor = conn.cursor()#(lf)cursor.execute(""SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != 'demo';"")#(lf)tables = [row[0] for row in cursor.fetchall()]#(lf)#(lf)# Vytvoření samostatného DataFrame pro každou tabulku#(lf)for table_name in tables:#(lf)    globals()[table_name] = pd.read_sql_query(f""SELECT * FROM `{table_name}`"", conn)#(lf)#(lf)conn.close()"),
+				    dataItiner1 = Source{[Name="dataItiner"]}[Value],
+				  #"Promoted headers" = Table.PromoteHeaders(dataItiner1, [PromoteAllScalars = true]),
+				  #"Changed column type" = Table.TransformColumnTypes(#"Promoted headers", {{"id_letenka", Int64.Type}, {"First id_from", Int64.Type}, {"Last id_to", Int64.Type}}, "en-US")
+				in
+				    #"Changed column type"
+
+	annotation PBI_ResultType = Table
+

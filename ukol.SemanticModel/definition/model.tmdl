@@ -1,0 +1,31 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: cs-CZ
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["dataAds","dataCRM","datadestinace","dataGA","dataItiner","dataLet","datastav"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table dataAds
+ref table DateTableTemplate_f839fb6d-79ac-4d5b-b93c-f8638153668c
+ref table dataCRM
+ref table datadestinace
+ref table dataGA
+ref table dataItiner
+ref table dataLet
+ref table datastav
+ref table Dim_Date
+ref table LocalDateTable_b6667d58-f91b-4802-bd62-9c6bd73be603
+ref table LocalDateTable_df21cbf1-dba3-46a9-8082-bd3485a166cf
+ref table LocalDateTable_adee6681-1ccc-49b4-a2da-fff7866abb38
+ref table LocalDateTable_945d1668-b0ab-4a0d-bb57-9d23666dfa01
+
+ref cultureInfo en-US
+

@@ -1,0 +1,145 @@
+{
+  "name": "RegioJet Corporate Theme",
+  "dataColors": [
+    "#FDB913",
+    "#1E1E1E",
+    "#002B49",
+    "#10B981",
+    "#EF4444",
+    "#F59E0B",
+    "#3B82F6",
+    "#8B5CF6",
+    "#06B6D4",
+    "#EC4899",
+    "#64748B",
+    "#D97706"
+  ],
+  "foreground": "#1E1E1E",
+  "foregroundNeutralSecondary": "#64748B",
+  "foregroundNeutralTertiary": "#94A3B8",
+  "foregroundNeutralLight": "#CBD5E1",
+  "background": "#FFFFFF",
+  "backgroundLight": "#F8FAFC",
+  "backgroundNeutral": "#F1F5F9",
+  "backgroundDark": "#E2E8F0",
+  "tableAccent": "#FDB913",
+  "shapeStroke": "#E2E8F0",
+  "disabledText": "#94A3B8",
+  "good": "#10B981",
+  "neutral": "#F59E0B",
+  "bad": "#EF4444",
+  "maximum": "#FDB913",
+  "center": "#F8FAFC",
+  "minimum": "#E2E8F0",
+  "null": "#94A3B8",
+  "hyperlink": "#002B49",
+  "visitedHyperlink": "#1E1E1E",
+  "textClasses": {
+    "callout": {
+      "fontSize": 24,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#1E1E1E"
+    },
+    "title": {
+      "fontSize": 14,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#1E1E1E"
+    },
+    "header": {
+      "fontSize": 12,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#1E1E1E"
+    },
+    "label": {
+      "fontSize": 10.5,
+      "fontFace": "Segoe UI",
+      "color": "#64748B"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
+            "transparency": 0
+          }
+        ],
+        "border": [
+          {
+            "show": true,
+            "width": 1,
+            "radius": 12,
+            "color": {
+              "solid": {
+                "color": "#E2E8F0"
+              }
+            }
+          }
+        ],
+        "dropShadow": [
+          {
+            "show": true,
+            "preset": "Custom",
+            "angle": 90,
+            "shadowDistance": 2,
+            "shadowBlur": 8,
+            "shadowSpread": 0,
+            "transparency": 88
+          }
+        ],
+        "padding": [
+          {
+            "left": 16,
+            "top": 14,
+            "right": 16,
+            "bottom": 16
+          }
+        ],
+        "title": [
+          {
+            "show": true,
+            "fontSize": 13,
+            "fontFamily": "Segoe UI Semibold",
+            "fontColor": {
+              "solid": {
+                "color": "#1E1E1E"
+              }
+            }
+          }
+        ],
+        "subTitle": [
+          {
+            "show": true,
+            "fontSize": 10.5,
+            "fontFamily": "Segoe UI",
+            "fontColor": {
+              "solid": {
+                "color": "#64748B"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [
+          {
+            "color": {
+              "solid": {
+                "color": "#F4F5F7"
+              }
+            },
+            "transparency": 0
+          }
+        ]
+      }
+    }
+  }
+}

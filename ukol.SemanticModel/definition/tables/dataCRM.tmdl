@@ -1,0 +1,41 @@
+table dataCRM
+	lineageTag: 4500107c-e1fa-4e22-9fcc-086007bde278
+
+	column datum_rezervace
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 74d73612-15cd-413a-ac33-4e05cfd7f967
+		summarizeBy: none
+		sourceColumn: datum_rezervace
+
+		annotation SummarizationSetBy = Automatic
+
+	column locator
+		dataType: string
+		lineageTag: 87c6c9a2-f80a-4338-b526-56ec6df3605d
+		summarizeBy: none
+		sourceColumn: locator
+
+		annotation SummarizationSetBy = Automatic
+
+	column id_rezervace
+		dataType: string
+		lineageTag: e3823930-e3f7-487f-bf3e-61cd14e2f106
+		summarizeBy: none
+		sourceColumn: id_rezervace
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dataCRM = m
+		mode: import
+		source =
+				let
+				    Source = Python.Execute("import sqlite3#(lf)import pandas as pd#(lf)#(lf)# Nahraďte přesnou cestou k vašemu souboru test_db.db#(lf)db_path = r'F:\stažené soubory\regiorepo\test_db.db'#(lf)#(lf)conn = sqlite3.connect(db_path)#(lf)#(lf)# Získání seznamu všech reálných tabulek (vynechá systémové sqlite tabulky a případné demo)#(lf)cursor = conn.cursor()#(lf)cursor.execute(""SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != 'demo';"")#(lf)tables = [row[0] for row in cursor.fetchall()]#(lf)#(lf)# Vytvoření samostatného DataFrame pro každou tabulku#(lf)for table_name in tables:#(lf)    globals()[table_name] = pd.read_sql_query(f""SELECT * FROM `{table_name}`"", conn)#(lf)#(lf)conn.close()"),
+				    dataCRM1 = Source{[Name="dataCRM"]}[Value],
+				  #"Promoted headers" = Table.PromoteHeaders(dataCRM1, [PromoteAllScalars = true]),
+				  #"Changed column type" = Table.TransformColumnTypes(#"Promoted headers", {{"datum_rezervace", type datetime}, {"locator", type text}, {"id_rezervace", type text}}, "en-US")
+				in
+				    #"Changed column type"
+
+	annotation PBI_ResultType = Table
+

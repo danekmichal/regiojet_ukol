@@ -1,0 +1,62 @@
+table dataGA
+	lineageTag: 6a187787-f803-480b-8cd6-34381e7c129d
+
+	column date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 97fc0b24-8b0b-4a02-8930-4fd7a84810fd
+		summarizeBy: none
+		sourceColumn: date
+
+		variation Variation
+			isDefault
+			relationship: 36af716d-0367-4b12-b8d8-67828e820091
+			defaultHierarchy: LocalDateTable_945d1668-b0ab-4a0d-bb57-9d23666dfa01.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column customEvent:rezervacni_kod
+		dataType: string
+		lineageTag: 54b7efd7-2860-42c6-8668-e48d01e0c143
+		summarizeBy: none
+		sourceColumn: customEvent:rezervacni_kod
+
+		annotation SummarizationSetBy = Automatic
+
+	column sessionMedium
+		dataType: string
+		lineageTag: 1c56a852-5812-478b-a175-79b4512bfd03
+		summarizeBy: none
+		sourceColumn: sessionMedium
+
+		annotation SummarizationSetBy = Automatic
+
+	column sessionSource
+		dataType: string
+		lineageTag: f1dc2709-510a-47b3-b962-44d1b3111af0
+		summarizeBy: none
+		sourceColumn: sessionSource
+
+		annotation SummarizationSetBy = Automatic
+
+	column sessionCampaignName
+		dataType: string
+		lineageTag: c36ae61c-8513-4287-aba4-3831ced5e824
+		summarizeBy: none
+		sourceColumn: sessionCampaignName
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dataGA = m
+		mode: import
+		source =
+				let
+				    Source = Python.Execute("import sqlite3#(lf)import pandas as pd#(lf)#(lf)# Nahraďte přesnou cestou k vašemu souboru test_db.db#(lf)db_path = r'F:\stažené soubory\regiorepo\test_db.db'#(lf)#(lf)conn = sqlite3.connect(db_path)#(lf)#(lf)# Získání seznamu všech reálných tabulek (vynechá systémové sqlite tabulky a případné demo)#(lf)cursor = conn.cursor()#(lf)cursor.execute(""SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != 'demo';"")#(lf)tables = [row[0] for row in cursor.fetchall()]#(lf)#(lf)# Vytvoření samostatného DataFrame pro každou tabulku#(lf)for table_name in tables:#(lf)    globals()[table_name] = pd.read_sql_query(f""SELECT * FROM `{table_name}`"", conn)#(lf)#(lf)conn.close()"),
+				    dataGA1 = Source{[Name="dataGA"]}[Value],
+				  #"Promoted headers" = Table.PromoteHeaders(dataGA1, [PromoteAllScalars = true]),
+				  #"Changed column type" = Table.TransformColumnTypes(#"Promoted headers", {{"date", type datetime}, {"customEvent:rezervacni_kod", type text}, {"sessionMedium", type text}, {"sessionSource", type text}, {"sessionCampaignName", type text}}, "en-US")
+				in
+				    #"Changed column type"
+
+	annotation PBI_ResultType = Table
+

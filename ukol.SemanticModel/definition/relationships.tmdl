@@ -1,0 +1,52 @@
+relationship AutoDetected_0c324bfa-e630-4800-9627-7db310670d6e
+	fromColumn: dataLet.id_rezervace
+	toColumn: dataCRM.id_rezervace
+
+relationship AutoDetected_3f7f487a-620c-4378-a4c7-7cc63b493c14
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: dataLet.id_letenka
+	toColumn: dataItiner.id_letenka
+
+relationship AutoDetected_78536b19-ee08-4b4b-854c-232d876a677a
+	fromColumn: dataLet.id_stav
+	toColumn: datastav.id_stav
+
+relationship 524ef371-480d-3ba5-729c-e3cb52bc19c8
+	fromColumn: dataItiner.'Last id_to'
+	toColumn: datadestinace.id_letiste
+
+relationship 63f3ac17-ab83-b88e-16dc-73d61e609dfc
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: dataCRM.locator
+	toColumn: dataGA.customEvent:rezervacni_kod
+
+relationship e9a2ee26-ed26-46bf-bc5a-a11b6da39836
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Date.Date
+	toColumn: LocalDateTable_b6667d58-f91b-4802-bd62-9c6bd73be603.Date
+
+relationship 17e23242-41db-41f8-a16b-2e71a7639359
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Date.ZacatekMesice
+	toColumn: LocalDateTable_df21cbf1-dba3-46a9-8082-bd3485a166cf.Date
+
+relationship bc43b020-f288-47e2-b0f9-59b13837ec6a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Date.ZacatekPondeliTydne
+	toColumn: LocalDateTable_adee6681-1ccc-49b4-a2da-fff7866abb38.Date
+
+relationship 3bb9e703-770a-ff0c-0d4e-56c9801497fd
+	fromColumn: dataCRM.datum_rezervace
+	toColumn: Dim_Date.Date
+
+relationship 05e9ea41-61af-507e-5830-969086029415
+	fromColumn: dataAds.WeekGroup
+	toColumn: Dim_Date.Date
+
+relationship 36af716d-0367-4b12-b8d8-67828e820091
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dataGA.date
+	toColumn: LocalDateTable_945d1668-b0ab-4a0d-bb57-9d23666dfa01.Date
+

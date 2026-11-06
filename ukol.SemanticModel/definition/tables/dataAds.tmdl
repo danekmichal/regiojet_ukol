@@ -1,0 +1,52 @@
+table dataAds
+	lineageTag: 572b91e6-4f8b-41e3-a974-557fb42a47ef
+
+	column WeekGroup
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 15e5bce1-9342-40c2-9cd1-165e9be8cacf
+		summarizeBy: none
+		sourceColumn: WeekGroup
+
+		annotation SummarizationSetBy = Automatic
+
+	column sessionCampaignName
+		dataType: string
+		lineageTag: 2759f81c-0bd4-4be9-a7a7-64a76a874189
+		summarizeBy: none
+		sourceColumn: sessionCampaignName
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdsCost
+		dataType: int64
+		formatString: 0
+		lineageTag: 6a46bf14-6b37-4e95-a102-3eaf67c1e9fc
+		summarizeBy: sum
+		sourceColumn: AdsCost
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdsClicks
+		dataType: int64
+		formatString: 0
+		lineageTag: 68634364-0ff4-43c3-8ab3-c294be93b6a9
+		summarizeBy: sum
+		sourceColumn: AdsClicks
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dataAds = m
+		mode: import
+		source =
+				let
+				    Source = Python.Execute("import sqlite3#(lf)import pandas as pd#(lf)#(lf)# Nahraďte přesnou cestou k vašemu souboru test_db.db#(lf)db_path = r'F:\stažené soubory\regiorepo\test_db.db'#(lf)#(lf)conn = sqlite3.connect(db_path)#(lf)#(lf)# Získání seznamu všech reálných tabulek (vynechá systémové sqlite tabulky a případné demo)#(lf)cursor = conn.cursor()#(lf)cursor.execute(""SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != 'demo';"")#(lf)tables = [row[0] for row in cursor.fetchall()]#(lf)#(lf)# Vytvoření samostatného DataFrame pro každou tabulku#(lf)for table_name in tables:#(lf)    globals()[table_name] = pd.read_sql_query(f""SELECT * FROM `{table_name}`"", conn)#(lf)#(lf)conn.close()"),
+				    dataAds1 = Source{[Name="dataAds"]}[Value],
+				    #"Changed Type" = Table.TransformColumnTypes(dataAds1,{{"c1", type text}, {"c2", type text}, {"c3", type text}, {"c4", type text}}),
+				  #"Promoted headers" = Table.PromoteHeaders(#"Changed Type", [PromoteAllScalars = true]),
+				  #"Changed column type" = Table.TransformColumnTypes(#"Promoted headers", {{"WeekGroup", type datetime}, {"AdsCost", Int64.Type}, {"AdsClicks", Int64.Type}}, "en-US")
+				in
+				    #"Changed column type"
+
+	annotation PBI_ResultType = Table
+

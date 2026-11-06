@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "ukol"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "c38a5a35-ccbf-46ff-a87f-b62213c5e37c"
+  }
+}
