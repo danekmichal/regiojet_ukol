@@ -603,9 +603,9 @@ export default function App() {
           </span>
         </div>
 
-        {/* Sjednocená hlavička na obou stránkách: VLEVO krátký 2-řádkový název, VPRAVO české Slicery */}
+        {/* Sjednocená hlavička na obou stránkách: VLEVO krátký 2-řádkový název + Navigační tlačítko, VPRAVO české Slicery + Tlačítko Vymazat filtry */}
         {(activeTab === 'page1' || activeTab === 'page2') && (
-          <header className="bg-white rounded-[24px] shadow-xs border-2 border-[#FDB913] px-6 py-3 flex flex-wrap items-center justify-between gap-4">
+          <header className="bg-white rounded-[24px] shadow-xs border-2 border-[#FDB913] px-5 py-3 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-[#1E1E1E] text-[#FDB913] flex items-center justify-center font-bold shadow-xs shrink-0">
                 <Plane className="w-4 h-4" />
@@ -620,19 +620,27 @@ export default function App() {
                     : 'Přehled objednávek & kampaní'}
                 </h1>
               </div>
+
+              <button
+                onClick={() => setActiveTab(activeTab === 'page1' ? 'page2' : 'page1')}
+                title="V Power BI Desktop: Ctrl + kliknutí (v publikovaném reportu 1 kliknutí)"
+                className="ml-2 px-3.5 py-2 rounded-xl bg-[#FDB913] hover:bg-[#e5a60f] text-[#1E1E1E] border border-[#1E1E1E] text-xs font-bold transition shadow-xs cursor-pointer whitespace-nowrap"
+              >
+                {activeTab === 'page1' ? 'Destinace & trasy ➔' : '⬅ Přehled objednávek'}
+              </button>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 ml-auto">
+            <div className="flex flex-wrap items-center gap-2.5 ml-auto">
               {activeTab === 'page1' ? (
                 <>
-                  <div className="flex flex-col min-w-[150px]">
+                  <div className="flex flex-col min-w-[130px]">
                     <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
                       Měsíc / Rok
                     </label>
                     <select
                       value={selectedMonth}
                       onChange={(e) => setSelectedMonth(e.target.value)}
-                      className="bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-700"
+                      className="bg-white border border-slate-300 rounded px-2 py-1 text-xs text-slate-700"
                     >
                       <option value="ALL">All</option>
                       {MONTHLY_DATA.map((m) => (
@@ -643,14 +651,14 @@ export default function App() {
                     </select>
                   </div>
 
-                  <div className="flex flex-col min-w-[160px]">
+                  <div className="flex flex-col min-w-[140px]">
                     <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
                       Zdroj objednávky
                     </label>
                     <select
                       value={selectedSource}
                       onChange={(e) => setSelectedSource(e.target.value)}
-                      className="bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-700"
+                      className="bg-white border border-slate-300 rounded px-2 py-1 text-xs text-slate-700"
                     >
                       <option value="ALL">All</option>
                       {Array.from(new Set(SOURCE_DATA.map((s) => s.source))).map((src) => (
@@ -661,14 +669,14 @@ export default function App() {
                     </select>
                   </div>
 
-                  <div className="flex flex-col min-w-[150px]">
+                  <div className="flex flex-col min-w-[130px]">
                     <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
                       Médium
                     </label>
                     <select
                       value={selectedMedium}
                       onChange={(e) => setSelectedMedium(e.target.value)}
-                      className="bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-700"
+                      className="bg-white border border-slate-300 rounded px-2 py-1 text-xs text-slate-700"
                     >
                       <option value="ALL">All</option>
                       {Array.from(new Set(SOURCE_DATA.map((s) => s.medium))).map((med) => (
@@ -679,6 +687,44 @@ export default function App() {
                     </select>
                   </div>
 
+                  <div className="flex flex-col min-w-[135px]">
+                    <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
+                      Stav objednávky
+                    </label>
+                    <select
+                      value={selectedStatus}
+                      onChange={(e) => setSelectedStatus(e.target.value)}
+                      className="bg-white border border-slate-300 rounded px-2 py-1 text-xs text-slate-700"
+                    >
+                      <option value="ALL">All</option>
+                      <option value="rezervováno">rezervováno</option>
+                      <option value="zrušeno">zrušeno</option>
+                      <option value="storno">storno</option>
+                      <option value="void">void</option>
+                    </select>
+                  </div>
+
+                  <div className="flex flex-col min-w-[145px]">
+                    <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
+                      Kontinent destinací
+                    </label>
+                    <select
+                      value={selectedContinent}
+                      onChange={(e) => setSelectedContinent(e.target.value)}
+                      className="bg-white border border-slate-300 rounded px-2 py-1 text-xs text-slate-700"
+                    >
+                      <option value="ALL">All</option>
+                      <option value="Evropa">Evropa</option>
+                      <option value="Asie & Blízký východ">Asie & Blízký východ</option>
+                      <option value="Severní & Střední Amerika">Severní & Střední Amerika</option>
+                      <option value="Jižní Amerika">Jižní Amerika</option>
+                      <option value="Afrika">Afrika</option>
+                      <option value="Austrálie & Oceánie">Austrálie & Oceánie</option>
+                    </select>
+                  </div>
+                </>
+              ) : (
+                <>
                   <div className="flex flex-col min-w-[145px]">
                     <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
                       Stav objednávky
@@ -714,46 +760,8 @@ export default function App() {
                       <option value="Austrálie & Oceánie">Austrálie & Oceánie</option>
                     </select>
                   </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex flex-col min-w-[150px]">
-                    <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
-                      Stav objednávky
-                    </label>
-                    <select
-                      value={selectedStatus}
-                      onChange={(e) => setSelectedStatus(e.target.value)}
-                      className="bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-700"
-                    >
-                      <option value="ALL">All</option>
-                      <option value="rezervováno">rezervováno</option>
-                      <option value="zrušeno">zrušeno</option>
-                      <option value="storno">storno</option>
-                      <option value="void">void</option>
-                    </select>
-                  </div>
 
-                  <div className="flex flex-col min-w-[160px]">
-                    <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
-                      Kontinent destinací
-                    </label>
-                    <select
-                      value={selectedContinent}
-                      onChange={(e) => setSelectedContinent(e.target.value)}
-                      className="bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-700"
-                    >
-                      <option value="ALL">All</option>
-                      <option value="Evropa">Evropa</option>
-                      <option value="Asie & Blízký východ">Asie & Blízký východ</option>
-                      <option value="Severní & Střední Amerika">Severní & Střední Amerika</option>
-                      <option value="Jižní Amerika">Jižní Amerika</option>
-                      <option value="Afrika">Afrika</option>
-                      <option value="Austrálie & Oceánie">Austrálie & Oceánie</option>
-                    </select>
-                  </div>
-
-                  <div className="flex flex-col min-w-[175px]">
+                  <div className="flex flex-col min-w-[165px]">
                     <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
                       Letiště
                     </label>
@@ -771,7 +779,7 @@ export default function App() {
                     </select>
                   </div>
 
-                  <div className="flex flex-col min-w-[140px]">
+                  <div className="flex flex-col min-w-[135px]">
                     <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
                       Měsíc / Rok
                     </label>
@@ -793,10 +801,11 @@ export default function App() {
 
               <button
                 onClick={resetFilters}
-                title="Resetovat filtry"
-                className="mt-4 p-1.5 rounded border border-slate-200 hover:bg-slate-100 text-slate-500 cursor-pointer"
+                title="Vymazat všechny filtry na stránce (ClearAllSlicers)"
+                className="mt-3.5 px-3 py-2 rounded-xl bg-[#1E1E1E] hover:bg-slate-800 text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer whitespace-nowrap shadow-xs"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
+                <RotateCcw className="w-3.5 h-3.5 text-[#FDB913]" />
+                Vymazat filtry
               </button>
             </div>
           </header>
