@@ -3,10 +3,10 @@
   "name": "a1000000000000000004",
   "position": {
     "x": 24,
-    "y": 120,
+    "y": 112,
     "z": 6,
-    "height": 130,
-    "width": 456,
+    "height": 132,
+    "width": 360,
     "tabOrder": 6
   },
   "visual": {
@@ -27,7 +27,7 @@
                 }
               },
               "queryRef": "_Measures.Pocet Objednavek (CRM)",
-              "nativeQueryRef": "Celkem objednávek (CRM)"
+              "nativeQueryRef": "Celkem"
             },
             {
               "field": {
@@ -41,44 +41,11 @@
                 }
               },
               "queryRef": "_Measures.MoM Trend Indikator",
-              "nativeQueryRef": "Meziměsíční vývoj (MoM)"
+              "nativeQueryRef": "vs PM"
             }
           ]
         }
       }
-    },
-    "objects": {
-      "card": [
-        {
-          "properties": {
-            "outlineColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#FDB913'"
-                    }
-                  }
-                }
-              }
-            },
-            "outlineWeight": {
-              "expr": {
-                "Literal": {
-                  "Value": "3D"
-                }
-              }
-            },
-            "barShow": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            }
-          }
-        }
-      ]
     },
     "visualContainerObjects": {
       "title": [
@@ -94,7 +61,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'CELKEM OBJEDNÁVEK (CRM) & MoM %'"
+                  "Value": "'Počet objednávek'"
                 }
               }
             }
@@ -140,7 +107,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#FDB913'"
+                      "Value": "'#E2E8F0'"
                     }
                   }
                 }
@@ -149,7 +116,7 @@
             "radius": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "16D"
                 }
               }
             }

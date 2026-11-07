@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "a1000000000000000002",
   "position": {
-    "x": 1312,
-    "y": 32,
+    "x": 596,
+    "y": 26,
     "z": 4,
     "height": 64,
-    "width": 270,
-    "tabOrder": 4
+    "width": 250,
+    "tabOrder": 3
   },
   "visual": {
     "visualType": "slicer",
@@ -27,7 +27,7 @@
                 }
               },
               "queryRef": "dataGA.sessionMedium",
-              "nativeQueryRef": "Médium (Medium)",
+              "nativeQueryRef": "Médium",
               "active": true
             }
           ]
@@ -58,10 +58,10 @@
                 }
               }
             },
-            "title": {
+            "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Médium (sessionMedium)'"
+                  "Value": "'Médium'"
                 }
               }
             }

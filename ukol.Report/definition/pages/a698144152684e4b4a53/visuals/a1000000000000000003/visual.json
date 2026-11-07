@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "a1000000000000000003",
   "position": {
-    "x": 1598,
-    "y": 32,
+    "x": 862,
+    "y": 26,
     "z": 5,
     "height": 64,
-    "width": 282,
-    "tabOrder": 5
+    "width": 270,
+    "tabOrder": 4
   },
   "visual": {
     "visualType": "slicer",
@@ -27,7 +27,7 @@
                 }
               },
               "queryRef": "datastav.nazev",
-              "nativeQueryRef": "Stav rezervace",
+              "nativeQueryRef": "Stav objednávky",
               "active": true
             }
           ]
@@ -58,10 +58,10 @@
                 }
               }
             },
-            "title": {
+            "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Stav rezervace'"
+                  "Value": "'Stav objednávky'"
                 }
               }
             }

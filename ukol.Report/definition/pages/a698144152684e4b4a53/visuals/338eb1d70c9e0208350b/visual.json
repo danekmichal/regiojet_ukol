@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "338eb1d70c9e0208350b",
   "position": {
-    "x": 44,
-    "y": 32,
+    "x": 1180,
+    "y": 26,
     "z": 1,
     "height": 64,
-    "width": 680,
-    "tabOrder": 1
+    "width": 696,
+    "tabOrder": 5
   },
   "visual": {
     "visualType": "textbox",
@@ -19,7 +19,20 @@
               {
                 "textRuns": [
                   {
-                    "value": "PŘEHLED OBJEDNÁVEK & MARKETINGOVÝCH KAMPANÍ",
+                    "value": "RegioJet / Student Agency BI",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "9.5pt",
+                      "color": "#64748B"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "right"
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Přehled objednávek & kampaní",
                     "textStyle": {
                       "fontWeight": "bold",
                       "fontFamily": "Segoe UI",
@@ -27,19 +40,8 @@
                       "color": "#1E1E1E"
                     }
                   }
-                ]
-              },
-              {
-                "textRuns": [
-                  {
-                    "value": "Performance přehled rezervací, nákladovosti (CPA), konverzního poměru (CR %) a akvizičních zdrojů",
-                    "textStyle": {
-                      "fontFamily": "Segoe UI",
-                      "fontSize": "9.5pt",
-                      "color": "#64748B"
-                    }
-                  }
-                ]
+                ],
+                "horizontalTextAlignment": "right"
               }
             ]
           }

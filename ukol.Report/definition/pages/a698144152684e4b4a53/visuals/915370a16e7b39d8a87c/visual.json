@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "915370a16e7b39d8a87c",
   "position": {
-    "x": 740,
-    "y": 32,
+    "x": 44,
+    "y": 26,
     "z": 2,
     "height": 64,
-    "width": 270,
-    "tabOrder": 2
+    "width": 250,
+    "tabOrder": 1
   },
   "visual": {
     "visualType": "slicer",
@@ -58,7 +58,7 @@
                 }
               }
             },
-            "title": {
+            "text": {
               "expr": {
                 "Literal": {
                   "Value": "'Měsíc / Rok'"

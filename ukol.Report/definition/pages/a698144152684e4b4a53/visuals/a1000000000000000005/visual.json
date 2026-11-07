@@ -2,15 +2,15 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "a1000000000000000005",
   "position": {
-    "x": 496,
-    "y": 120,
+    "x": 402,
+    "y": 112,
     "z": 7,
-    "height": 130,
-    "width": 456,
+    "height": 132,
+    "width": 360,
     "tabOrder": 7
   },
   "visual": {
-    "visualType": "card",
+    "visualType": "multiRowCard",
     "query": {
       "queryState": {
         "Values": {
@@ -23,30 +23,15 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Pocet Kampani"
+                  "Property": "Pocet Letenek"
                 }
               },
-              "queryRef": "_Measures.Pocet Kampani",
-              "nativeQueryRef": "Aktivních kampaní"
+              "queryRef": "_Measures.Pocet Letenek",
+              "nativeQueryRef": "Vystavené a aktivní letenky"
             }
           ]
         }
       }
-    },
-    "objects": {
-      "categoryLabels": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ]
     },
     "visualContainerObjects": {
       "title": [
@@ -62,7 +47,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'AKTIVNÍCH KAMPANÍ'"
+                  "Value": "'Počet letenek'"
                 }
               }
             }
@@ -108,7 +93,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#FDB913'"
+                      "Value": "'#E2E8F0'"
                     }
                   }
                 }
@@ -117,7 +102,7 @@
             "radius": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "16D"
                 }
               }
             }

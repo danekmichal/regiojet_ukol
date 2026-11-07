@@ -1,0 +1,73 @@
+table Dim_Letiste
+	lineageTag: 7c8d9e0f-1a2b-4c3d-8e5f-6a7b8c9d0e1f
+
+	column id_letiste
+		dataType: int64
+		isKey
+		isHidden
+		formatString: 0
+		lineageTag: 11a22b33-44c5-45d6-87e8-99f00a11b22c
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [id_letiste]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Letiště
+		dataType: string
+		dataCategory: Place
+		lineageTag: 22b33c44-55d6-46e7-98f9-00a11b22c33d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Letiště]
+
+		annotation SummarizationSetBy = Automatic
+
+	column PocetLetenekCelkem
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 33c44d55-66e7-47f8-89a0-11b22c33d44e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [PocetLetenekCelkem]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Letiste = calculated
+		mode: import
+		source =
+				VAR _ValidItiner =
+				    CALCULATETABLE (
+				        VALUES ( dataItiner[Last id_to] ),
+				        NOT ISBLANK ( dataItiner[id_letenka] )
+				    )
+				RETURN
+				    FILTER (
+				        ADDCOLUMNS (
+				            SELECTCOLUMNS (
+				                FILTER (
+				                    datadestinace,
+				                    datadestinace[id_letiste] IN _ValidItiner
+				                        && NOT ISBLANK ( datadestinace[nazev] )
+				                        && TRIM ( datadestinace[nazev] ) <> ""
+				                        && TRIM ( datadestinace[nazev] ) <> "0"
+				                        && NOT CONTAINSSTRING ( datadestinace[nazev], "&#" )
+				                ),
+				                "id_letiste", datadestinace[id_letiste],
+				                "Letiště", datadestinace[nazev]
+				            ),
+				            "PocetLetenekCelkem",
+				                VAR _Id = [id_letiste]
+				                RETURN
+				                    CALCULATE (
+				                        COUNTROWS ( dataLet ),
+				                        TREATAS ( { _Id }, dataItiner[Last id_to] ),
+				                        NOT ISBLANK ( dataCRM[id_rezervace] )
+				                    )
+				        ),
+				        [PocetLetenekCelkem] > 0
+				    )
+
+	annotation PBI_Id = 44d55e66f7a848b990c122d33e44f55a
+

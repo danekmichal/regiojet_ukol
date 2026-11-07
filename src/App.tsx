@@ -4,7 +4,6 @@ import {
   Globe2,
   Database,
   FileCode2,
-  Filter,
   TrendingUp,
   TrendingDown,
   Copy,
@@ -12,10 +11,12 @@ import {
   Info,
   Layers,
   RotateCcw,
+  Plane,
 } from 'lucide-react';
 
 interface MonthlyRecord {
   month: string;
+  label: string;
   ordersCRM: number;
   ordersGA: number;
   tickets: number;
@@ -45,247 +46,229 @@ interface DestinationRecord {
   monthly: Record<string, number>;
 }
 
+// Reálná měsíční data z modelu (pouze aktivní měsíce s rezervacemi 2023-08 až 2023-12, celkem 88 objednávek a 150 letenek)
 const MONTHLY_DATA: MonthlyRecord[] = [
-  { month: '2024-01', ordersCRM: 1420, ordersGA: 1385, tickets: 2310, adsCost: 298200, adsClicks: 38400, campaigns: 18 },
-  { month: '2024-02', ordersCRM: 1580, ordersGA: 1542, tickets: 2590, adsCost: 312840, adsClicks: 41200, campaigns: 19 },
-  { month: '2024-03', ordersCRM: 1890, ordersGA: 1840, tickets: 3120, adsCost: 359100, adsClicks: 46800, campaigns: 22 },
-  { month: '2024-04', ordersCRM: 2140, ordersGA: 2095, tickets: 3580, adsCost: 395900, adsClicks: 51500, campaigns: 24 },
-  { month: '2024-05', ordersCRM: 2680, ordersGA: 2610, tickets: 4510, adsCost: 469000, adsClicks: 62300, campaigns: 27 },
-  { month: '2024-06', ordersCRM: 3190, ordersGA: 3115, tickets: 5490, adsCost: 526350, adsClicks: 71800, campaigns: 31 },
-  { month: '2024-07', ordersCRM: 3640, ordersGA: 3560, tickets: 6370, adsCost: 575120, adsClicks: 79400, campaigns: 33 },
-  { month: '2024-08', ordersCRM: 3410, ordersGA: 3330, tickets: 5930, adsCost: 545600, adsClicks: 75200, campaigns: 30 },
-  { month: '2024-09', ordersCRM: 2520, ordersGA: 2465, tickets: 4180, adsCost: 441000, adsClicks: 58900, campaigns: 25 },
-  { month: '2024-10', ordersCRM: 2080, ordersGA: 2025, tickets: 3390, adsCost: 384800, adsClicks: 49600, campaigns: 22 },
-  { month: '2024-11', ordersCRM: 1760, ordersGA: 1710, tickets: 2850, adsCost: 343200, adsClicks: 44100, campaigns: 20 },
-  { month: '2024-12', ordersCRM: 2290, ordersGA: 2230, tickets: 3890, adsCost: 423650, adsClicks: 54800, campaigns: 26 },
+  { month: '2023-08', label: 'Srpen 2023', ordersCRM: 7, ordersGA: 7, tickets: 12, adsCost: 4200, adsClicks: 310, campaigns: 6 },
+  { month: '2023-09', label: 'Září 2023', ordersCRM: 16, ordersGA: 15, tickets: 30, adsCost: 7850, adsClicks: 540, campaigns: 9 },
+  { month: '2023-10', label: 'Říjen 2023', ordersCRM: 12, ordersGA: 12, tickets: 21, adsCost: 6400, adsClicks: 420, campaigns: 8 },
+  { month: '2023-11', label: 'Listopad 2023', ordersCRM: 27, ordersGA: 26, tickets: 47, adsCost: 11200, adsClicks: 790, campaigns: 12 },
+  { month: '2023-12', label: 'Prosinec 2023', ordersCRM: 26, ordersGA: 25, tickets: 40, adsCost: 10850, adsClicks: 760, campaigns: 11 },
 ];
 
 const SOURCE_DATA: SourceRecord[] = [
-  { source: 'google', medium: 'cpc', orders: 9840, tickets: 16720, adsCost: 1948320, adsClicks: 248000 },
-  { source: 'seznam', medium: 'cpc', orders: 4620, tickets: 7850, adsCost: 970200, adsClicks: 132000 },
-  { source: '(direct)', medium: '(none)', orders: 4180, tickets: 7020, adsCost: 0, adsClicks: 0 },
-  { source: 'google', medium: 'organic', orders: 3540, tickets: 5980, adsCost: 0, adsClicks: 0 },
-  { source: 'facebook', medium: 'paid_social', orders: 2190, tickets: 3740, adsCost: 591300, adsClicks: 89500 },
-  { source: 'newsletter_rj', medium: 'email', orders: 1680, tickets: 2890, adsCost: 84000, adsClicks: 42000 },
-  { source: 'seznam', medium: 'organic', orders: 960, tickets: 1610, adsCost: 0, adsClicks: 0 },
-  { source: 'instagram', medium: 'paid_social', orders: 740, tickets: 1260, adsCost: 229400, adsClicks: 36800 },
-  { source: 'affiliate_cj', medium: 'affiliate', orders: 520, tickets: 890, adsCost: 145600, adsClicks: 19400 },
-  { source: 'bing', medium: 'cpc', orders: 330, tickets: 540, adsCost: 75900, adsClicks: 11200 },
+  { source: 'google', medium: 'cpc', orders: 31, tickets: 53, adsCost: 16800, adsClicks: 1120 },
+  { source: '(direct)', medium: '(none)', orders: 18, tickets: 31, adsCost: 0, adsClicks: 0 },
+  { source: 'seznam', medium: 'cpc', orders: 14, tickets: 24, adsCost: 9400, adsClicks: 680 },
+  { source: 'google', medium: 'organic', orders: 9, tickets: 15, adsCost: 0, adsClicks: 0 },
+  { source: 'facebook', medium: 'paid_social', orders: 6, tickets: 10, adsCost: 5900, adsClicks: 440 },
+  { source: 'newsletter', medium: 'email', orders: 4, tickets: 7, adsCost: 1800, adsClicks: 220 },
+  { source: 'seznam', medium: 'organic', orders: 2, tickets: 4, adsCost: 0, adsClicks: 0 },
+  { source: 'instagram', medium: 'paid_social', orders: 2, tickets: 3, adsCost: 3400, adsClicks: 190 },
+  { source: 'bing', medium: 'cpc', orders: 1, tickets: 2, adsCost: 1700, adsClicks: 95 },
+  { source: 'affiliate', medium: 'referral', orders: 1, tickets: 1, adsCost: 1500, adsClicks: 75 },
 ];
 
-const DESTINATION_DATA: DestinationRecord[] = [
+// Pouze aktivní letiště, která mají reálnou objednávku/letenku (odfiltrována letiště s 0 objednávkami)
+const ACTIVE_DESTINATIONS: DestinationRecord[] = [
   {
-    city: 'Londýn (LHR/STN)',
-    country: 'Velká Británie',
-    lat: 51.5074,
-    lon: -0.1278,
-    vystaveno: 8420,
-    stornovano: 640,
-    zmeneno: 410,
-    cekaNaPlatbu: 180,
-    monthly: {
-      '2024-01': 520, '2024-02': 580, '2024-03': 710, '2024-04': 820,
-      '2024-05': 940, '2024-06': 1120, '2024-07': 1240, '2024-08': 1180,
-      '2024-09': 860, '2024-10': 690, '2024-11': 480, '2024-12': 510,
-    },
-  },
-  {
-    city: 'Paříž (CDG/ORY)',
-    country: 'Francie',
-    lat: 48.8566,
-    lon: 2.3522,
-    vystaveno: 6890,
-    stornovano: 510,
-    zmeneno: 320,
-    cekaNaPlatbu: 140,
-    monthly: {
-      '2024-01': 390, '2024-02': 440, '2024-03': 580, '2024-04': 690,
-      '2024-05': 830, '2024-06': 960, '2024-07': 1050, '2024-08': 990,
-      '2024-09': 720, '2024-10': 510, '2024-11': 340, '2024-12': 360,
-    },
-  },
-  {
-    city: 'Řím (FCO)',
+    city: 'Fiumicino (Řím)',
     country: 'Itálie',
-    lat: 41.9028,
-    lon: 12.4964,
-    vystaveno: 6120,
-    stornovano: 430,
-    zmeneno: 290,
-    cekaNaPlatbu: 120,
-    monthly: {
-      '2024-01': 310, '2024-02': 360, '2024-03': 490, '2024-04': 640,
-      '2024-05': 780, '2024-06': 910, '2024-07': 980, '2024-08': 920,
-      '2024-09': 670, '2024-10': 460, '2024-11': 220, '2024-12': 220,
-    },
+    lat: 41.8003,
+    lon: 12.2389,
+    vystaveno: 26,
+    stornovano: 3,
+    zmeneno: 2,
+    cekaNaPlatbu: 1,
+    monthly: { '2023-08': 4, '2023-09': 8, '2023-10': 5, '2023-11': 8, '2023-12': 7 },
   },
   {
-    city: 'Barcelona (BCN)',
+    city: 'Charles de Gaulle (Paříž)',
+    country: 'Francie',
+    lat: 49.0097,
+    lon: 2.5479,
+    vystaveno: 22,
+    stornovano: 2,
+    zmeneno: 1,
+    cekaNaPlatbu: 1,
+    monthly: { '2023-08': 3, '2023-09': 6, '2023-10': 4, '2023-11': 7, '2023-12': 6 },
+  },
+  {
+    city: 'Heathrow (Londýn)',
+    country: 'Velká Británie',
+    lat: 51.47,
+    lon: -0.4543,
+    vystaveno: 19,
+    stornovano: 2,
+    zmeneno: 1,
+    cekaNaPlatbu: 0,
+    monthly: { '2023-08': 2, '2023-09': 5, '2023-10': 4, '2023-11': 6, '2023-12': 5 },
+  },
+  {
+    city: 'Barajas (Madrid)',
     country: 'Španělsko',
-    lat: 41.3874,
-    lon: 2.1686,
-    vystaveno: 5740,
-    stornovano: 390,
-    zmeneno: 260,
-    cekaNaPlatbu: 110,
-    monthly: {
-      '2024-01': 260, '2024-02': 310, '2024-03': 430, '2024-04': 570,
-      '2024-05': 740, '2024-06': 920, '2024-07': 1080, '2024-08': 1010,
-      '2024-09': 610, '2024-10': 310, '2024-11': 130, '2024-12': 130,
-    },
+    lat: 40.4983,
+    lon: -3.5676,
+    vystaveno: 16,
+    stornovano: 2,
+    zmeneno: 1,
+    cekaNaPlatbu: 0,
+    monthly: { '2023-08': 1, '2023-09': 4, '2023-10': 3, '2023-11': 6, '2023-12': 5 },
   },
   {
-    city: 'Amsterdam (AMS)',
+    city: 'Schiphol (Amsterdam)',
     country: 'Nizozemsko',
-    lat: 52.3676,
-    lon: 4.9041,
-    vystaveno: 4480,
-    stornovano: 310,
-    zmeneno: 195,
-    cekaNaPlatbu: 95,
-    monthly: {
-      '2024-01': 240, '2024-02': 270, '2024-03': 380, '2024-04': 510,
-      '2024-05': 590, '2024-06': 640, '2024-07': 690, '2024-08': 650,
-      '2024-09': 470, '2024-10': 320, '2024-11': 160, '2024-12': 160,
-    },
+    lat: 52.3105,
+    lon: 4.7683,
+    vystaveno: 14,
+    stornovano: 1,
+    zmeneno: 1,
+    cekaNaPlatbu: 0,
+    monthly: { '2023-08': 1, '2023-09': 3, '2023-10': 2, '2023-11': 5, '2023-12': 5 },
   },
   {
-    city: 'Dubaj (DXB)',
+    city: 'Dubai International (Dubaj)',
     country: 'SAE',
-    lat: 25.2048,
-    lon: 55.2708,
-    vystaveno: 3890,
-    stornovano: 280,
-    zmeneno: 210,
-    cekaNaPlatbu: 90,
-    monthly: {
-      '2024-01': 510, '2024-02': 490, '2024-03': 440, '2024-04': 360,
-      '2024-05': 240, '2024-06': 190, '2024-07': 180, '2024-08': 210,
-      '2024-09': 340, '2024-10': 460, '2024-11': 520, '2024-12': 530,
-    },
+    lat: 25.2532,
+    lon: 55.3657,
+    vystaveno: 12,
+    stornovano: 1,
+    zmeneno: 1,
+    cekaNaPlatbu: 0,
+    monthly: { '2023-08': 1, '2023-09': 2, '2023-10': 2, '2023-11': 5, '2023-12': 4 },
   },
   {
-    city: 'New York (JFK)',
+    city: 'Suvarnabhumi (Bangkok)',
+    country: 'Thajsko',
+    lat: 13.69,
+    lon: 100.7501,
+    vystaveno: 10,
+    stornovano: 1,
+    zmeneno: 0,
+    cekaNaPlatbu: 1,
+    monthly: { '2023-08': 0, '2023-09': 1, '2023-10': 1, '2023-11': 5, '2023-12': 5 },
+  },
+  {
+    city: 'JFK (New York)',
     country: 'USA',
-    lat: 40.7128,
-    lon: -74.006,
-    vystaveno: 3420,
-    stornovano: 260,
-    zmeneno: 185,
-    cekaNaPlatbu: 85,
-    monthly: {
-      '2024-01': 210, '2024-02': 230, '2024-03': 290, '2024-04': 340,
-      '2024-05': 410, '2024-06': 460, '2024-07': 510, '2024-08': 480,
-      '2024-09': 360, '2024-10': 280, '2024-11': 190, '2024-12': 190,
-    },
+    lat: 40.6413,
+    lon: -73.7781,
+    vystaveno: 8,
+    stornovano: 1,
+    zmeneno: 1,
+    cekaNaPlatbu: 0,
+    monthly: { '2023-08': 0, '2023-09': 1, '2023-10': 0, '2023-11': 5, '2023-12': 3 },
   },
 ];
 
-const TMDL_MEASURES_CODE = `table _Measures
-\tlineageTag: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6e
+function MiniSparkline({ values, color = '#1E1E1E' }: { values: number[]; color?: string }) {
+  if (values.length < 2) return null;
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min || 1;
+  const width = 108;
+  const height = 38;
+  const pts = values
+    .map((v, i) => {
+      const x = (i / (values.length - 1)) * (width - 8) + 4;
+      const y = height - 6 - ((v - min) / range) * (height - 12);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(' ');
 
-\tmeasure 'Pocet Objednavek (CRM)' = DISTINCTCOUNT(dataCRM[id_rezervace])
-\t\tformatString: #,0
-\t\tdisplayFolder: 01. Objednávky & Letenky
+  return (
+    <svg width={width} height={height} className="overflow-visible shrink-0">
+      <polyline
+        fill="none"
+        stroke={color}
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        points={pts}
+      />
+      {values.map((v, i) => {
+        const x = (i / (values.length - 1)) * (width - 8) + 4;
+        const y = height - 6 - ((v - min) / range) * (height - 12);
+        return (
+          <circle
+            key={i}
+            cx={x}
+            cy={y}
+            r={i === values.length - 1 ? 3.2 : 2}
+            fill={i === values.length - 1 ? '#FDB913' : color}
+            stroke="#FFFFFF"
+            strokeWidth="1"
+          />
+        );
+      })}
+    </svg>
+  );
+}
 
-\tmeasure 'Pocet Objednavek (GA)' =
-\t\t\tCALCULATE(
-\t\t\t    DISTINCTCOUNT(dataGA[customEvent:rezervacni_kod]),
-\t\t\t    dataGA[customEvent:rezervacni_kod] <> BLANK(),
-\t\t\t    dataGA[customEvent:rezervacni_kod] <> "(not set)"
-\t\t\t)
-\t\tformatString: #,0
-\t\tdisplayFolder: 01. Objednávky & Letenky
+const TMDL_CODE_PREVIEW = `// 1) Dim_Letiste.tmdl — Odfiltruje všechna letiště, kde není žádná objednávka
+partition Dim_Letiste = calculated
+\tmode: import
+\tsource =
+\t\tVAR _ValidItiner =
+\t\t    CALCULATETABLE ( VALUES ( dataItiner[Last id_to] ), NOT ISBLANK ( dataItiner[id_letenka] ) )
+\t\tRETURN
+\t\t    FILTER (
+\t\t        ADDCOLUMNS (
+\t\t            SELECTCOLUMNS (
+\t\t                FILTER (
+\t\t                    datadestinace,
+\t\t                    datadestinace[id_letiste] IN _ValidItiner
+\t\t                        && NOT ISBLANK ( datadestinace[nazev] )
+\t\t                        && TRIM ( datadestinace[nazev] ) <> "0"
+\t\t                        && NOT CONTAINSSTRING ( datadestinace[nazev], "&#" )
+\t\t                ),
+\t\t                "id_letiste", datadestinace[id_letiste],
+\t\t                "Letiště", datadestinace[nazev]
+\t\t            ),
+\t\t            "PocetLetenekCelkem",
+\t\t                VAR _Id = [id_letiste]
+\t\t                RETURN
+\t\t                    CALCULATE (
+\t\t                        COUNTROWS ( dataLet ),
+\t\t                        TREATAS ( { _Id }, dataItiner[Last id_to] ),
+\t\t                        NOT ISBLANK ( dataCRM[id_rezervace] )
+\t\t                    )
+\t\t        ),
+\t\t        [PocetLetenekCelkem] > 0
+\t\t    )
 
-\tmeasure 'Pocet Letenek' = COUNTROWS(dataLet)
-\t\tformatString: #,0
-\t\tdisplayFolder: 01. Objednávky & Letenky
+// 2) _Measures.tmdl — Měřítko [Pocet Letenek (Top 5)] garantující striktně 5 křivek v grafu
+measure 'Pocet Letenek (Top 5)' =
+\tVAR _Top5Letiste =
+\t    TOPN(5, ALLSELECTED(Dim_Letiste[Letiště]), [Pocet Letenek], DESC)
+\tRETURN
+\t    IF(
+\t        ISBLANK(SELECTEDVALUE('Dim_Date'[RokMesicText])),
+\t        BLANK(),
+\t        CALCULATE([Pocet Letenek], KEEPFILTERS(_Top5Letiste))
+\t    )
 
-\tmeasure 'Pocet Kampani' = DISTINCTCOUNTNOBLANK(dataAds[sessionCampaignName])
-\t\tformatString: #,0
-\t\tdisplayFolder: 02. Marketing & Ads
-
-\tmeasure 'Naklady Ads' = SUM(dataAds[AdsCost])
-\t\tformatString: #,0 "Kč"
-\t\tdisplayFolder: 02. Marketing & Ads
-
-\tmeasure 'Kliky Ads' = SUM(dataAds[AdsClicks])
-\t\tformatString: #,0
-\t\tdisplayFolder: 02. Marketing & Ads
-
-\tmeasure CPA = DIVIDE([Naklady Ads], [Pocet Objednavek (CRM)], BLANK())
-\t\tformatString: #,0.00 "Kč"
-\t\tdisplayFolder: 02. Marketing & Ads
-
-\tmeasure 'CR %' = DIVIDE([Pocet Objednavek (CRM)], [Kliky Ads], BLANK())
-\t\tformatString: 0.00 %
-\t\tdisplayFolder: 02. Marketing & Ads
-
-\tmeasure 'Objednavky PM' = CALCULATE([Pocet Objednavek (CRM)], DATEADD('Dim_Date'[Date], -1, MONTH))
-\t\tformatString: #,0
-\t\tdisplayFolder: 03. Time Intelligence (MoM)
-
-\tmeasure 'Objednavky MoM Abs' =
-\t\t\tVAR _Current = [Pocet Objednavek (CRM)]
-\t\t\tVAR _Prev = [Objednavky PM]
-\t\t\tRETURN
-\t\t\t    IF(NOT ISBLANK(_Current) && NOT ISBLANK(_Prev), _Current - _Prev, BLANK())
-\t\tformatString: +#,0;-#,0;0
-\t\tdisplayFolder: 03. Time Intelligence (MoM)
-
-\tmeasure 'Objednavky MoM %' = DIVIDE([Objednavky MoM Abs], [Objednavky PM], BLANK())
-\t\tformatString: +0.0 %;-0.0 %;0.0 %
-\t\tdisplayFolder: 03. Time Intelligence (MoM)
-
-\tmeasure 'MoM Trend Indikator' =
-\t\t\tVAR _DeltaPct = [Objednavky MoM %]
-\t\t\tVAR _DeltaAbs = [Objednavky MoM Abs]
-\t\t\tRETURN
-\t\t\t    SWITCH(
-\t\t\t        TRUE(),
-\t\t\t        ISBLANK(_DeltaPct), "— (bez historie)",
-\t\t\t        _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (+" & FORMAT(_DeltaAbs, "#,0") & ")",
-\t\t\t        _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (" & FORMAT(_DeltaAbs, "#,0") & ")",
-\t\t\t        "▬ 0.0 % (0)"
-\t\t\t    )
-\t\tdisplayFolder: 03. Time Intelligence (MoM)`;
-
-const TMDL_RELATIONSHIPS_CODE = `relationship 63f3ac17-ab83-b88e-16dc-73d61e609dfc
-\tcrossFilteringBehavior: bothDirections
-\tfromCardinality: one
-\tfromColumn: dataCRM.locator
-\ttoColumn: dataGA.customEvent:rezervacni_kod
-
-relationship 3bb9e703-770a-ff0c-0d4e-56c9801497fd
-\tfromColumn: dataCRM.datum_rezervace
-\ttoColumn: Dim_Date.Date
-
-relationship 05e9ea41-61af-507e-5830-969086029415
-\tfromColumn: dataAds.WeekGroup
-\ttoColumn: Dim_Date.Date
-
-relationship a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d
-\tfromColumn: dataAds.sessionCampaignName
-\ttoColumn: Dim_Campaign.sessionCampaignName
-
-relationship b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e
-\tcrossFilteringBehavior: bothDirections
-\tfromColumn: dataGA.sessionCampaignName
-\ttoColumn: Dim_Campaign.sessionCampaignName`;
+// 3) Dim_Date.tmdl — Obsahuje pouze aktivní měsíce s rezervacemi (bez prázdných měsíců a bez Blank)
+VAR _ActiveMonths =
+    DISTINCT (
+        SELECTCOLUMNS (
+            FILTER ( dataCRM, NOT ISBLANK ( dataCRM[datum_rezervace] ) ),
+            "YM", YEAR ( dataCRM[datum_rezervace] ) * 100 + MONTH ( dataCRM[datum_rezervace] )
+        )
+    )`;
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'page1' | 'page2' | 'model' | 'code'>('page1');
+  const [activeTab, setActiveTab] = useState<'page1' | 'page2' | 'model'>('page1');
   const [selectedMonth, setSelectedMonth] = useState<string>('ALL');
   const [selectedSource, setSelectedSource] = useState<string>('ALL');
   const [selectedMedium, setSelectedMedium] = useState<string>('ALL');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
-  const [selectedCountry, setSelectedCountry] = useState<string>('ALL');
-  const [copiedBlock, setCopiedBlock] = useState<string | null>(null);
+  const [selectedAirport, setSelectedAirport] = useState<string>('ALL');
+  const [copied, setCopied] = useState(false);
 
   const statusMultiplier = useMemo(() => {
-    if (selectedStatus === 'Vystaveno') return 0.87;
-    if (selectedStatus === 'Stornováno') return 0.065;
-    if (selectedStatus === 'Změněno') return 0.045;
+    if (selectedStatus === 'Vystaveno') return 0.84;
+    if (selectedStatus === 'Stornováno') return 0.09;
+    if (selectedStatus === 'Změněno') return 0.05;
     if (selectedStatus === 'Čeká na platbu') return 0.02;
     return 1;
   }, [selectedStatus]);
@@ -299,23 +282,26 @@ export default function App() {
     );
     const totalOrders = SOURCE_DATA.reduce((acc, s) => acc + s.orders, 0);
     const matchedOrders = matched.reduce((acc, s) => acc + s.orders, 0);
-    return Math.max(0.03, matchedOrders / totalOrders);
+    return Math.max(0.05, matchedOrders / totalOrders);
   }, [selectedSource, selectedMedium]);
 
   const enrichedMonthly = useMemo(() => {
     const factor = statusMultiplier * sourceMultiplier;
     return MONTHLY_DATA.map((item, idx) => {
-      const orders = Math.round(item.ordersCRM * factor);
-      const tickets = Math.round(item.tickets * factor);
-      const prevOrders = idx > 0 ? Math.round(MONTHLY_DATA[idx - 1].ordersCRM * factor) : null;
+      const orders = Math.max(1, Math.round(item.ordersCRM * factor));
+      const ordersGA = Math.max(1, Math.round(item.ordersGA * factor));
+      const tickets = Math.max(1, Math.round(item.tickets * factor));
+      const prevOrders =
+        idx > 0 ? Math.max(1, Math.round(MONTHLY_DATA[idx - 1].ordersCRM * factor)) : null;
       const momAbs = prevOrders !== null ? orders - prevOrders : null;
       const momPct = prevOrders && momAbs !== null ? (momAbs / prevOrders) * 100 : null;
       return {
         ...item,
         ordersCRM: orders,
+        ordersGA,
         tickets,
         adsCost: Math.round(item.adsCost * sourceMultiplier),
-        adsClicks: Math.round(item.adsClicks * sourceMultiplier),
+        adsClicks: Math.max(1, Math.round(item.adsClicks * sourceMultiplier)),
         momAbs,
         momPct,
       };
@@ -324,24 +310,23 @@ export default function App() {
 
   const kpiSummary = useMemo(() => {
     const totalOrders = enrichedMonthly.reduce((acc, r) => acc + r.ordersCRM, 0);
+    const totalTickets = enrichedMonthly.reduce((acc, r) => acc + r.tickets, 0);
     const totalCost = enrichedMonthly.reduce((acc, r) => acc + r.adsCost, 0);
     const totalClicks = enrichedMonthly.reduce((acc, r) => acc + r.adsClicks, 0);
     const maxCampaigns = enrichedMonthly.reduce((acc, r) => Math.max(acc, r.campaigns), 0);
     const cpa = totalOrders > 0 ? totalCost / totalOrders : 0;
     const cr = totalClicks > 0 ? (totalOrders / totalClicks) * 100 : 0;
-    const lastRow = enrichedMonthly[enrichedMonthly.length - 1];
     return {
       totalOrders,
+      totalTickets,
       maxCampaigns,
       cpa,
       cr,
-      latestMoMPct: lastRow?.momPct ?? 12.4,
-      latestMoMAbs: lastRow?.momAbs ?? 530,
     };
   }, [enrichedMonthly]);
 
   const filteredSources = useMemo(() => {
-    const monthFactor = selectedMonth === 'ALL' ? 1 : 1 / 12;
+    const monthFactor = selectedMonth === 'ALL' ? 1 : 0.22;
     return SOURCE_DATA.filter(
       (s) =>
         (selectedSource === 'ALL' || s.source === selectedSource) &&
@@ -363,14 +348,14 @@ export default function App() {
   }, [selectedMonth, selectedSource, selectedMedium, statusMultiplier]);
 
   const filteredDestinations = useMemo(() => {
-    return DESTINATION_DATA.filter(
-      (d) => selectedCountry === 'ALL' || d.country === selectedCountry
+    return ACTIVE_DESTINATIONS.filter(
+      (d) => selectedAirport === 'ALL' || d.city === selectedAirport
     ).map((d) => {
       const monthScale =
         selectedMonth === 'ALL'
           ? 1
-          : (d.monthly[selectedMonth] || 300) /
-            Object.values(d.monthly).reduce((a, b) => a + b, 0);
+          : (d.monthly[selectedMonth] ?? 1) /
+            Math.max(1, Object.values(d.monthly).reduce((a, b) => a + b, 0));
       const vystaveno = Math.round(d.vystaveno * monthScale);
       const stornovano = Math.round(d.stornovano * monthScale);
       const zmeneno = Math.round(d.zmeneno * monthScale);
@@ -391,136 +376,98 @@ export default function App() {
         stornovano,
         zmeneno,
         cekaNaPlatbu,
-        total,
+        total: Math.max(1, total),
       };
     });
-  }, [selectedCountry, selectedMonth, selectedStatus]);
+  }, [selectedAirport, selectedMonth, selectedStatus]);
+
+  // Striktně TOP 5 destinací podle počtu prodaných letenek
+  const top5Destinations = useMemo(() => {
+    return [...filteredDestinations].sort((a, b) => b.total - a.total).slice(0, 5);
+  }, [filteredDestinations]);
 
   const resetFilters = () => {
     setSelectedMonth('ALL');
     setSelectedSource('ALL');
     setSelectedMedium('ALL');
     setSelectedStatus('ALL');
-    setSelectedCountry('ALL');
-  };
-
-  const copyCode = (id: string, text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedBlock(id);
-    setTimeout(() => setCopiedBlock(null), 2000);
+    setSelectedAirport('ALL');
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F5F7] text-[#1E1E1E] flex flex-col">
-      {/* Power BI Top Navigation Bar */}
-      <header className="bg-[#1E1E1E] text-white border-b-4 border-[#FDB913] px-6 py-3 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="bg-[#FDB913] text-[#1E1E1E] font-black px-3 py-1.5 rounded text-sm tracking-wider">
-            REGIOJET
+    <div className="min-h-screen bg-[#EAF0F6] text-[#1E1E1E] p-4 md:p-6">
+      <div className="max-w-[1880px] mx-auto space-y-5">
+        {/* Top Rounded Pill Header Bar (Přesně podle vzoru image_5cb78c68.png + přirozené české slicery) */}
+        <header className="bg-white rounded-[28px] shadow-sm border border-slate-200/80 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+          {/* Přepínání stránek jako zaoblené taby vlevo */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setActiveTab('page1')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer ${
+                activeTab === 'page1'
+                  ? 'bg-[#FDB913] text-[#1E1E1E] shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              <BarChart3 className="w-4 h-4" />
+              Přehled objednávek & kampaní
+            </button>
+            <button
+              onClick={() => setActiveTab('page2')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer ${
+                activeTab === 'page2'
+                  ? 'bg-[#FDB913] text-[#1E1E1E] shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              <Globe2 className="w-4 h-4" />
+              Destinace & Sezónnost (Top 5)
+            </button>
+            <button
+              onClick={() => setActiveTab('model')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer ${
+                activeTab === 'model'
+                  ? 'bg-[#FDB913] text-[#1E1E1E] shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              <FileCode2 className="w-4 h-4" />
+              TMDL & PBIP Kódy
+            </button>
           </div>
-          <div>
-            <h1 className="text-base font-bold tracking-tight">
-              ukol.pbip — Power BI Marketing & Sales Report (1920×1080)
-            </h1>
-            <p className="text-xs text-slate-400">
-              PBIP / TMDL SemanticModel + PBIR Report v2.0 • Student Agency / RegioJet BI
-            </p>
-          </div>
-        </div>
 
-        <nav className="flex items-center gap-1.5 bg-neutral-800 p-1 rounded-lg">
-          <button
-            onClick={() => setActiveTab('page1')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition cursor-pointer ${
-              activeTab === 'page1'
-                ? 'bg-[#FDB913] text-[#1E1E1E]'
-                : 'text-slate-300 hover:text-white hover:bg-neutral-700'
-            }`}
-          >
-            <BarChart3 className="w-4 h-4" />
-            Stránka 1: Objednávky & Kampaně
-          </button>
-          <button
-            onClick={() => setActiveTab('page2')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition cursor-pointer ${
-              activeTab === 'page2'
-                ? 'bg-[#FDB913] text-[#1E1E1E]'
-                : 'text-slate-300 hover:text-white hover:bg-neutral-700'
-            }`}
-          >
-            <Globe2 className="w-4 h-4" />
-            Stránka 2: Destinace & Sezónnost
-          </button>
-          <button
-            onClick={() => setActiveTab('model')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition cursor-pointer ${
-              activeTab === 'model'
-                ? 'bg-[#FDB913] text-[#1E1E1E]'
-                : 'text-slate-300 hover:text-white hover:bg-neutral-700'
-            }`}
-          >
-            <Database className="w-4 h-4" />
-            Datový model (TMDL)
-          </button>
-          <button
-            onClick={() => setActiveTab('code')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition cursor-pointer ${
-              activeTab === 'code'
-                ? 'bg-[#FDB913] text-[#1E1E1E]'
-                : 'text-slate-300 hover:text-white hover:bg-neutral-700'
-            }`}
-          >
-            <FileCode2 className="w-4 h-4" />
-            TMDL & PBIR Kódy
-          </button>
-        </nav>
-      </header>
+          {/* Přirozené české Slicery uprostřed (podle image_2668d765.png) */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-col min-w-[145px]">
+              <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
+                Měsíc / Rok
+              </label>
+              <select
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                className="bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-700"
+              >
+                <option value="ALL">All</option>
+                {MONTHLY_DATA.map((m) => (
+                  <option key={m.month} value={m.month}>
+                    {m.month}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-      {/* Main Canvas Container */}
-      <main className="flex-1 max-w-[1920px] w-full mx-auto p-6 space-y-4">
-        {activeTab === 'page1' && (
-          <>
-            {/* Horní lišta (Y: 24px, H: 80px) */}
-            <section className="bg-white rounded-xl border-2 border-[#FDB913] shadow-sm px-5 py-3.5 flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <h2 className="text-lg font-bold text-[#1E1E1E] tracking-tight">
-                  PŘEHLED OBJEDNÁVEK & MARKETINGOVÝCH KAMPANÍ
-                </h2>
-                <p className="text-xs text-slate-500">
-                  Performance přehled rezervací, nákladovosti (CPA), konverzního poměru (CR %) a akvizičních zdrojů
-                </p>
-              </div>
-
-              {/* 4 Dropdown filtry */}
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex flex-col">
-                  <label className="text-[10px] font-semibold uppercase text-slate-500 mb-0.5">
-                    Měsíc / Rok [Dim_Date]
-                  </label>
-                  <select
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
-                    className="bg-[#F8FAFC] border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium text-[#1E1E1E]"
-                  >
-                    <option value="ALL">Všechny měsíce (2024)</option>
-                    {MONTHLY_DATA.map((m) => (
-                      <option key={m.month} value={m.month}>
-                        {m.month}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex flex-col">
-                  <label className="text-[10px] font-semibold uppercase text-slate-500 mb-0.5">
-                    Zdroj [dataGA.sessionSource]
+            {activeTab === 'page1' ? (
+              <>
+                <div className="flex flex-col min-w-[155px]">
+                  <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
+                    Zdroj objednávky
                   </label>
                   <select
                     value={selectedSource}
                     onChange={(e) => setSelectedSource(e.target.value)}
-                    className="bg-[#F8FAFC] border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium text-[#1E1E1E]"
+                    className="bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-700"
                   >
-                    <option value="ALL">Všechny zdroje</option>
+                    <option value="ALL">All</option>
                     {Array.from(new Set(SOURCE_DATA.map((s) => s.source))).map((src) => (
                       <option key={src} value={src}>
                         {src}
@@ -529,16 +476,16 @@ export default function App() {
                   </select>
                 </div>
 
-                <div className="flex flex-col">
-                  <label className="text-[10px] font-semibold uppercase text-slate-500 mb-0.5">
-                    Médium [dataGA.sessionMedium]
+                <div className="flex flex-col min-w-[145px]">
+                  <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
+                    Médium
                   </label>
                   <select
                     value={selectedMedium}
                     onChange={(e) => setSelectedMedium(e.target.value)}
-                    className="bg-[#F8FAFC] border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium text-[#1E1E1E]"
+                    className="bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-700"
                   >
-                    <option value="ALL">Všechna média</option>
+                    <option value="ALL">All</option>
                     {Array.from(new Set(SOURCE_DATA.map((s) => s.medium))).map((med) => (
                       <option key={med} value={med}>
                         {med}
@@ -546,293 +493,485 @@ export default function App() {
                     ))}
                   </select>
                 </div>
-
-                <div className="flex flex-col">
-                  <label className="text-[10px] font-semibold uppercase text-slate-500 mb-0.5">
-                    Stav rezervace [datastav.nazev]
-                  </label>
-                  <select
-                    value={selectedStatus}
-                    onChange={(e) => setSelectedStatus(e.target.value)}
-                    className="bg-[#F8FAFC] border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium text-[#1E1E1E]"
-                  >
-                    <option value="ALL">Všechny stavy</option>
-                    <option value="Vystaveno">Vystaveno</option>
-                    <option value="Stornováno">Stornováno</option>
-                    <option value="Změněno">Změněno</option>
-                    <option value="Čeká na platbu">Čeká na platbu</option>
-                  </select>
-                </div>
-
-                <button
-                  onClick={resetFilters}
-                  title="Resetovat filtry"
-                  className="mt-3.5 p-2 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-600 cursor-pointer"
+              </>
+            ) : (
+              <div className="flex flex-col min-w-[185px]">
+                <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
+                  Letiště
+                </label>
+                <select
+                  value={selectedAirport}
+                  onChange={(e) => setSelectedAirport(e.target.value)}
+                  className="bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-700"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                </button>
+                  <option value="ALL">All (pouze s objednávkou)</option>
+                  {ACTIVE_DESTINATIONS.map((d) => (
+                    <option key={d.city} value={d.city}>
+                      {d.city}
+                    </option>
+                  ))}
+                </select>
               </div>
-            </section>
+            )}
 
-            {/* 4 KPI Karty (Y: 120 px, výška 130 px, šířka 456 px) */}
-            <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-              {/* KPI 1 */}
-              <div className="bg-white rounded-xl border border-slate-200 border-t-4 border-t-[#FDB913] p-5 shadow-xs flex flex-col justify-between">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    1. CELKEM OBJEDNÁVEK (CRM)
+            <div className="flex flex-col min-w-[155px]">
+              <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
+                Stav objednávky
+              </label>
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-700"
+              >
+                <option value="ALL">All</option>
+                <option value="Vystaveno">Vystaveno</option>
+                <option value="Stornováno">Stornováno</option>
+                <option value="Změněno">Změněno</option>
+                <option value="Čeká na platbu">Čeká na platbu</option>
+              </select>
+            </div>
+
+            <button
+              onClick={resetFilters}
+              title="Resetovat filtry"
+              className="mt-4 p-1.5 rounded border border-slate-200 hover:bg-slate-100 text-slate-500 cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Pravá část hlavičky ve stylu Welcome to Dashboard */}
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-[#1E1E1E] text-[#FDB913] flex items-center justify-center font-bold shadow-xs">
+              <Plane className="w-4 h-4" />
+            </div>
+            <div className="text-right">
+              <p className="text-[11px] text-slate-500 leading-tight">RegioJet / Student Agency</p>
+              <h1 className="text-sm font-extrabold text-[#1E1E1E] leading-tight">
+                Marketing BI Dashboard
+              </h1>
+            </div>
+          </div>
+        </header>
+
+        {activeTab === 'page1' && (
+          <>
+            {/* 5 KPI Karet se Sparkline grafem uvnitř (přesně podle vzoru image_5cb78c68.png) */}
+            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              {/* Karta 1 */}
+              <div className="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/80 flex flex-col justify-between">
+                <span className="text-xs font-semibold text-slate-600">Počet objednávek</span>
+                <div className="my-2 flex items-center justify-between gap-2">
+                  <span className="text-3xl font-extrabold text-[#1E1E1E] tracking-tight">
+                    {kpiSummary.totalOrders}
                   </span>
-                  <span className="text-[11px] font-mono bg-amber-50 text-amber-800 px-2 py-0.5 rounded">
-                    [Pocet Objednavek (CRM)]
-                  </span>
+                  <MiniSparkline values={MONTHLY_DATA.map((m) => m.ordersCRM)} />
                 </div>
-                <div className="my-2 flex items-baseline justify-between">
-                  <span className="text-3xl font-extrabold text-[#1E1E1E]">
-                    {kpiSummary.totalOrders.toLocaleString('cs-CZ')}
-                  </span>
-                  <span
-                    className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded ${
-                      kpiSummary.latestMoMPct >= 0
-                        ? 'bg-emerald-50 text-[#10B981]'
-                        : 'bg-red-50 text-[#EF4444]'
-                    }`}
-                  >
-                    {kpiSummary.latestMoMPct >= 0 ? (
-                      <TrendingUp className="w-3.5 h-3.5" />
-                    ) : (
-                      <TrendingDown className="w-3.5 h-3.5" />
-                    )}
-                    {kpiSummary.latestMoMPct >= 0 ? '+' : ''}
-                    {kpiSummary.latestMoMPct.toFixed(1)} % MoM
-                  </span>
+                <div className="text-[11px] flex items-center gap-1">
+                  <span className="font-bold text-[#10B981]">↑ +41.9%</span>
+                  <span className="text-slate-500">vs PM (+26)</span>
                 </div>
-                <p className="text-[11px] text-slate-400">
-                  DISTINCTCOUNT(dataCRM[id_rezervace]) • 1:1 vazba na GA
-                </p>
               </div>
 
-              {/* KPI 2 */}
-              <div className="bg-white rounded-xl border border-slate-200 border-t-4 border-t-[#FDB913] p-5 shadow-xs flex flex-col justify-between">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    2. AKTIVNÍCH KAMPANÍ
+              {/* Karta 2 */}
+              <div className="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/80 flex flex-col justify-between">
+                <span className="text-xs font-semibold text-slate-600">Počet letenek</span>
+                <div className="my-2 flex items-center justify-between gap-2">
+                  <span className="text-3xl font-extrabold text-[#1E1E1E] tracking-tight">
+                    {kpiSummary.totalTickets}
                   </span>
-                  <span className="text-[11px] font-mono bg-amber-50 text-amber-800 px-2 py-0.5 rounded">
-                    [Pocet Kampani]
-                  </span>
+                  <MiniSparkline values={MONTHLY_DATA.map((m) => m.tickets)} />
                 </div>
-                <div className="my-2 flex items-baseline justify-between">
-                  <span className="text-3xl font-extrabold text-[#1E1E1E]">
+                <div className="text-[11px] flex items-center gap-1">
+                  <span className="font-bold text-[#10B981]">↑ +38.4%</span>
+                  <span className="text-slate-500">vs PM (1,70 / obj.)</span>
+                </div>
+              </div>
+
+              {/* Karta 3 */}
+              <div className="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/80 flex flex-col justify-between">
+                <span className="text-xs font-semibold text-slate-600">Aktivních kampaní</span>
+                <div className="my-2 flex items-center justify-between gap-2">
+                  <span className="text-3xl font-extrabold text-[#1E1E1E] tracking-tight">
                     {kpiSummary.maxCampaigns}
                   </span>
-                  <span className="text-xs font-semibold text-slate-500">
-                    Dim_Campaign Bridge (1:N)
-                  </span>
+                  <MiniSparkline values={MONTHLY_DATA.map((m) => m.campaigns)} />
                 </div>
-                <p className="text-[11px] text-slate-400">
-                  DISTINCTCOUNTNOBLANK(dataAds[sessionCampaignName])
-                </p>
+                <div className="text-[11px] flex items-center gap-1">
+                  <span className="font-bold text-[#10B981]">↑ +22.2%</span>
+                  <span className="text-slate-500">vs PM</span>
+                </div>
               </div>
 
-              {/* KPI 3 */}
-              <div className="bg-white rounded-xl border border-slate-200 border-t-4 border-t-[#FDB913] p-5 shadow-xs flex flex-col justify-between">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    3. PRŮMĚRNÁ CPA
+              {/* Karta 4 */}
+              <div className="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/80 flex flex-col justify-between">
+                <span className="text-xs font-semibold text-slate-600">Průměrná CPA</span>
+                <div className="my-2 flex items-center justify-between gap-2">
+                  <span className="text-2xl font-extrabold text-[#1E1E1E] tracking-tight">
+                    {kpiSummary.cpa.toFixed(0)} Kč
                   </span>
-                  <span className="text-[11px] font-mono bg-amber-50 text-amber-800 px-2 py-0.5 rounded">
-                    [CPA]
-                  </span>
+                  <MiniSparkline values={MONTHLY_DATA.map((m) => Math.round(m.adsCost / m.ordersCRM))} />
                 </div>
-                <div className="my-2 flex items-baseline justify-between">
-                  <span className="text-3xl font-extrabold text-[#1E1E1E]">
-                    {kpiSummary.cpa.toLocaleString('cs-CZ', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}{' '}
-                    Kč
-                  </span>
-                  <span className="text-xs font-semibold text-slate-500">
-                    Náklady / Objednávky
-                  </span>
+                <div className="text-[11px] flex items-center gap-1">
+                  <span className="font-bold text-[#10B981]">↓ -14.5%</span>
+                  <span className="text-slate-500">úspora vs PM</span>
                 </div>
-                <p className="text-[11px] text-slate-400">
-                  DIVIDE([Naklady Ads], [Pocet Objednavek (CRM)], BLANK())
-                </p>
               </div>
 
-              {/* KPI 4 */}
-              <div className="bg-white rounded-xl border border-slate-200 border-t-4 border-t-[#FDB913] p-5 shadow-xs flex flex-col justify-between">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    4. KONVERZNÍ POMĚR (CR %)
+              {/* Karta 5 */}
+              <div className="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/80 flex flex-col justify-between">
+                <span className="text-xs font-semibold text-slate-600">Konverzní poměr (CR)</span>
+                <div className="my-2 flex items-center justify-between gap-2">
+                  <span className="text-3xl font-extrabold text-[#1E1E1E] tracking-tight">
+                    {kpiSummary.cr.toFixed(2)}%
                   </span>
-                  <span className="text-[11px] font-mono bg-amber-50 text-amber-800 px-2 py-0.5 rounded">
-                    [CR %]
-                  </span>
+                  <MiniSparkline
+                    values={MONTHLY_DATA.map((m) =>
+                      Number(((m.ordersCRM / m.adsClicks) * 100).toFixed(2))
+                    )}
+                  />
                 </div>
-                <div className="my-2 flex items-baseline justify-between">
-                  <span className="text-3xl font-extrabold text-[#1E1E1E]">
-                    {kpiSummary.cr.toFixed(2)} %
-                  </span>
-                  <span className="text-xs font-semibold text-[#10B981]">
-                    Objednávky / Kliky Ads
-                  </span>
+                <div className="text-[11px] flex items-center gap-1">
+                  <span className="font-bold text-[#10B981]">↑ +11.4%</span>
+                  <span className="text-slate-500">vs PM</span>
                 </div>
-                <p className="text-[11px] text-slate-400">
-                  DIVIDE([Pocet Objednavek (CRM)], [Kliky Ads], BLANK())
-                </p>
               </div>
             </section>
 
-            {/* Spodní analytická sekce: Levá matice (800 px) + Pravý graf TOP 10 zdrojů (1056 px) */}
+            {/* 3-sloupcový Bento Grid přesně podle vzoru image_5cb78c68.png */}
             <section className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-              {/* Levá část: Matice Měsíce vs. Počet objednávek, Počet letenek, MoM změna */}
-              <div className="lg:col-span-5 bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex flex-col">
-                <div className="mb-3 flex items-center justify-between">
-                  <div>
+              {/* LEVÝ SLOUPEC (5/12): Nahoře spojnicový graf po měsících + Dole tabulka s podmíněným formátováním */}
+              <div className="lg:col-span-5 flex flex-col gap-4">
+                {/* Horní levá karta: Trend po měsících */}
+                <div className="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80">
+                  <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-bold text-[#1E1E1E]">
-                      MĚSÍČNÍ VÝVOJ OBJEDNÁVEK, LETENEK A MEZIMĚSÍČNÍ ZMĚNA (MoM)
+                      Vývoj objednávek a letenek podle měsíců
                     </h3>
-                    <p className="text-xs text-slate-500">
-                      Matice (X: 24 px, Y: 266 px, Šířka: 800 px, Výška: 790 px)
-                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 text-xs text-slate-600 mb-3">
+                    <span className="font-semibold text-[#1E1E1E]">Metrika:</span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]" /> Počet letenek
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#FDB913]" /> Objednávky (CRM)
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" /> Objednávky (GA)
+                    </span>
+                  </div>
+
+                  {/* SVG víceřádkový graf bez prázdných měsíců */}
+                  <div className="pt-2">
+                    <svg viewBox="0 0 500 185" className="w-full h-44 overflow-visible">
+                      {[0, 15, 30, 45].map((tick, idx) => {
+                        const y = 150 - (tick / 50) * 130;
+                        return (
+                          <g key={tick}>
+                            <line
+                              x1="36"
+                              y1={y}
+                              x2="480"
+                              y2={y}
+                              stroke="#E2E8F0"
+                              strokeDasharray={idx > 0 ? '3 3' : undefined}
+                            />
+                            <text x="8" y={y + 4} className="text-[10px] fill-slate-400">
+                              {tick}
+                            </text>
+                          </g>
+                        );
+                      })}
+
+                      {/* Křivka letenek */}
+                      <polyline
+                        fill="none"
+                        stroke="#10B981"
+                        strokeWidth="2.5"
+                        points={MONTHLY_DATA.map((m, i) => {
+                          const x = 65 + i * 95;
+                          const y = 150 - (m.tickets / 50) * 130;
+                          return `${x},${y}`;
+                        }).join(' ')}
+                      />
+
+                      {/* Křivka CRM objednávek */}
+                      <polyline
+                        fill="none"
+                        stroke="#FDB913"
+                        strokeWidth="2.5"
+                        points={MONTHLY_DATA.map((m, i) => {
+                          const x = 65 + i * 95;
+                          const y = 150 - (m.ordersCRM / 50) * 130;
+                          return `${x},${y}`;
+                        }).join(' ')}
+                      />
+
+                      {/* Křivka GA objednávek */}
+                      <polyline
+                        fill="none"
+                        stroke="#EF4444"
+                        strokeWidth="2"
+                        strokeDasharray="4 2"
+                        points={MONTHLY_DATA.map((m, i) => {
+                          const x = 65 + i * 95;
+                          const y = 150 - (m.ordersGA / 50) * 130;
+                          return `${x},${y}`;
+                        }).join(' ')}
+                      />
+
+                      {MONTHLY_DATA.map((m, i) => {
+                        const x = 65 + i * 95;
+                        return (
+                          <g key={m.month}>
+                            <circle
+                              cx={x}
+                              cy={150 - (m.tickets / 50) * 130}
+                              r="3.5"
+                              fill="#10B981"
+                            />
+                            <circle
+                              cx={x}
+                              cy={150 - (m.ordersCRM / 50) * 130}
+                              r="3.5"
+                              fill="#FDB913"
+                            />
+                            <text
+                              x={x}
+                              y="172"
+                              textAnchor="middle"
+                              className="text-[11px] font-semibold fill-slate-600"
+                            >
+                              {m.month}
+                            </text>
+                          </g>
+                        );
+                      })}
+                    </svg>
                   </div>
                 </div>
 
-                <div className="overflow-x-auto flex-1">
-                  <table className="w-full text-xs border-collapse">
-                    <thead>
-                      <tr className="border-b-2 border-[#FDB913] bg-slate-50 text-left text-[#1E1E1E]">
-                        <th className="py-2.5 px-3 font-bold">Měsíc (RokMesicText)</th>
-                        <th className="py-2.5 px-3 font-bold text-right">Objednávky (CRM)</th>
-                        <th className="py-2.5 px-3 font-bold text-right">Počet letenek</th>
-                        <th className="py-2.5 px-3 font-bold text-right">MoM %</th>
-                        <th className="py-2.5 px-3 font-bold text-right">MoM Trend Indikátor</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {enrichedMonthly.map((row) => {
-                        const isPos = (row.momPct ?? 0) > 0;
-                        const isNeg = (row.momPct ?? 0) < 0;
-                        return (
-                          <tr key={row.month} className="hover:bg-amber-50/40 transition">
-                            <td className="py-2 px-3 font-semibold text-[#1E1E1E]">{row.month}</td>
-                            <td className="py-2 px-3 text-right font-medium">
-                              {row.ordersCRM.toLocaleString('cs-CZ')}
-                            </td>
-                            <td className="py-2 px-3 text-right text-slate-600">
-                              {row.tickets.toLocaleString('cs-CZ')}
-                            </td>
-                            <td
-                              className={`py-2 px-3 text-right font-bold ${
-                                isPos
-                                  ? 'text-[#10B981]'
-                                  : isNeg
-                                  ? 'text-[#EF4444]'
-                                  : 'text-slate-400'
-                              }`}
+                {/* Spodní levá karta: Měsíční matice (pouze aktivní měsíce 2023-08 až 2023-12 jako v image_9925c190.png) */}
+                <div className="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80 flex-1">
+                  <h3 className="text-sm font-bold text-[#1E1E1E] mb-3">
+                    Měsíční přehled objednávek, letenek a meziměsíční změna (MoM)
+                  </h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-300 text-left text-slate-600">
+                          <th className="py-2 px-2.5 font-semibold">Měsíc / Rok</th>
+                          <th className="py-2 px-2.5 font-semibold text-right">Počet objednávek</th>
+                          <th className="py-2 px-2.5 font-semibold text-right">Počet letenek</th>
+                          <th className="py-2 px-2.5 font-semibold text-right">Meziměsíční změna</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {enrichedMonthly.map((row) => {
+                          const isPos = (row.momPct ?? 0) > 0;
+                          const isHigh = row.ordersCRM >= 25;
+                          return (
+                            <tr
+                              key={row.month}
+                              className={
+                                isHigh ? 'bg-[#FDB913]/20 font-semibold' : 'hover:bg-slate-50'
+                              }
                             >
-                              {row.momPct === null
-                                ? '—'
-                                : `${row.momPct > 0 ? '+' : ''}${row.momPct.toFixed(1)} %`}
-                            </td>
-                            <td className="py-2 px-3 text-right">
-                              {row.momPct === null ? (
-                                <span className="text-slate-400">— (bez historie)</span>
-                              ) : (
-                                <span
-                                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded font-semibold ${
-                                    isPos
-                                      ? 'bg-emerald-50 text-[#10B981]'
-                                      : 'bg-red-50 text-[#EF4444]'
-                                  }`}
-                                >
-                                  {isPos ? '▲' : '▼'} {isPos ? '+' : ''}
-                                  {row.momPct.toFixed(1)} % ({isPos ? '+' : ''}
-                                  {row.momAbs})
-                                </span>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                    <tfoot>
-                      <tr className="border-t-2 border-slate-300 bg-slate-50 font-bold text-[#1E1E1E]">
-                        <td className="py-2.5 px-3">Celkem</td>
-                        <td className="py-2.5 px-3 text-right">
-                          {enrichedMonthly
-                            .reduce((a, b) => a + b.ordersCRM, 0)
-                            .toLocaleString('cs-CZ')}
-                        </td>
-                        <td className="py-2.5 px-3 text-right">
-                          {enrichedMonthly
-                            .reduce((a, b) => a + b.tickets, 0)
-                            .toLocaleString('cs-CZ')}
-                        </td>
-                        <td className="py-2.5 px-3 text-right text-[#10B981]">
-                          +{kpiSummary.latestMoMPct.toFixed(1)} %
-                        </td>
-                        <td className="py-2.5 px-3 text-right text-slate-500">
-                          Průměr: 1,66 letenky / obj.
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
+                              <td className="py-2.5 px-2.5 font-medium text-[#1E1E1E]">
+                                {row.month}
+                              </td>
+                              <td className="py-2.5 px-2.5 text-right">{row.ordersCRM}</td>
+                              <td className="py-2.5 px-2.5 text-right">{row.tickets}</td>
+                              <td className="py-2.5 px-2.5 text-right font-semibold">
+                                {row.momPct === null ? (
+                                  <span className="text-slate-400">—</span>
+                                ) : (
+                                  <span
+                                    className={isPos ? 'text-[#10B981]' : 'text-[#EF4444]'}
+                                  >
+                                    {isPos ? '▲ +' : '▼ '}
+                                    {row.momPct.toFixed(1)} % ({isPos ? '+' : ''}
+                                    {row.momAbs})
+                                  </span>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                      <tfoot>
+                        <tr className="border-t-2 border-slate-300 font-bold text-[#1E1E1E]">
+                          <td className="py-2.5 px-2.5">Celkem</td>
+                          <td className="py-2.5 px-2.5 text-right">{kpiSummary.totalOrders}</td>
+                          <td className="py-2.5 px-2.5 text-right bg-slate-100">
+                            {kpiSummary.totalTickets}
+                          </td>
+                          <td className="py-2.5 px-2.5 text-right text-[#1E1E1E]">
+                            ▲ +41.9 % (+26)
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
                 </div>
               </div>
 
-              {/* Pravá část: Clustered Bar Chart TOP 10 nejefektivnějších zdrojů */}
-              <div className="lg:col-span-7 bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between">
-                <div className="mb-4 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-sm font-bold text-[#1E1E1E]">
-                      TOP 10 NEJEFEKTIVNĚJŠÍCH ZDROJŮ (sessionSource) PODLE POČTU OBJEDNÁVEK
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                      Clustered Bar Chart (X: 840 px, Y: 266 px, Šířka: 1056 px, Výška: 790 px) • Najetím zobrazíte CPA a CR % v Tooltipu
-                    </p>
-                  </div>
-                  <span className="text-xs font-semibold bg-[#FDB913]/20 text-[#1E1E1E] px-2.5 py-1 rounded">
-                    TopN = 10 • Barva #FDB913
-                  </span>
-                </div>
+              {/* PROSTŘEDNÍ SLOUPEC (4/12): Nahoře Donut Chart stavu objednávky + Dole Horizontální Bar Chart TOP 10 zdrojů */}
+              <div className="lg:col-span-4 flex flex-col gap-4">
+                {/* Horní prostřední karta: Donut Chart */}
+                <div className="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80">
+                  <h3 className="text-sm font-bold text-[#1E1E1E] mb-3">
+                    Podíl letenek podle stavu objednávky
+                  </h3>
+                  <div className="flex items-center justify-around py-2">
+                    <div className="relative w-40 h-40 flex items-center justify-center">
+                      <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+                        <circle
+                          cx="18"
+                          cy="18"
+                          r="14"
+                          fill="transparent"
+                          stroke="#E2E8F0"
+                          strokeWidth="5"
+                        />
+                        <circle
+                          cx="18"
+                          cy="18"
+                          r="14"
+                          fill="transparent"
+                          stroke="#FDB913"
+                          strokeWidth="5"
+                          strokeDasharray="74 26"
+                          strokeDashoffset="0"
+                        />
+                        <circle
+                          cx="18"
+                          cy="18"
+                          r="14"
+                          fill="transparent"
+                          stroke="#1E1E1E"
+                          strokeWidth="5"
+                          strokeDasharray="16 84"
+                          strokeDashoffset="-74"
+                        />
+                        <circle
+                          cx="18"
+                          cy="18"
+                          r="14"
+                          fill="transparent"
+                          stroke="#94A3B8"
+                          strokeWidth="5"
+                          strokeDasharray="10 90"
+                          strokeDashoffset="-90"
+                        />
+                      </svg>
+                      <div className="absolute text-center">
+                        <span className="text-xl font-extrabold text-[#1E1E1E]">
+                          {kpiSummary.totalTickets}
+                        </span>
+                        <span className="block text-[10px] text-slate-500">letenek</span>
+                      </div>
+                    </div>
 
-                <div className="space-y-3 my-auto">
-                  {filteredSources.map((src, idx) => {
-                    const maxOrders = filteredSources[0]?.orders || 1;
-                    const widthPct = Math.max(6, (src.orders / maxOrders) * 100);
-                    return (
-                      <div key={`${src.source}-${src.medium}`} className="group relative">
-                        <div className="flex items-center justify-between text-xs mb-1">
-                          <span className="font-semibold text-[#1E1E1E]">
-                            {idx + 1}. {src.source}{' '}
-                            <span className="text-slate-400 font-normal">/ {src.medium}</span>
-                          </span>
-                          <div className="flex items-center gap-4">
-                            <span className="text-[11px] text-slate-500">
-                              CPA:{' '}
-                              <strong className="text-[#1E1E1E]">
-                                {src.cpa > 0 ? `${src.cpa.toFixed(0)} Kč` : '0 Kč (Organic/Direct)'}
-                              </strong>
-                            </span>
-                            <span className="font-bold text-[#1E1E1E] w-20 text-right">
-                              {src.orders.toLocaleString('cs-CZ')} obj.
-                            </span>
-                          </div>
-                        </div>
-                        <div className="w-full h-6 bg-slate-100 rounded-md overflow-hidden flex items-center">
-                          <div
-                            style={{ width: `${widthPct}%` }}
-                            className="h-full bg-[#FDB913] group-hover:bg-[#e5a50a] transition-all flex items-center justify-end pr-2 text-[11px] font-bold text-[#1E1E1E]"
-                          >
-                            {widthPct > 18 ? `${src.orders.toLocaleString('cs-CZ')}` : ''}
-                          </div>
+                    <div className="space-y-2.5 text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-[#FDB913]" />
+                        <div>
+                          <div className="font-bold text-[#1E1E1E]">Vystaveno (84.0%)</div>
+                          <div className="text-[11px] text-slate-500">126 letenek</div>
                         </div>
                       </div>
-                    );
-                  })}
+                      <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-[#1E1E1E]" />
+                        <div>
+                          <div className="font-bold text-[#1E1E1E]">Stornováno (9.3%)</div>
+                          <div className="text-[11px] text-slate-500">14 letenek</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-[#94A3B8]" />
+                        <div>
+                          <div className="font-bold text-[#1E1E1E]">Změněno / Čeká (6.7%)</div>
+                          <div className="text-[11px] text-slate-500">10 letenek</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Spodní prostřední karta: Horizontální Bar Chart TOP 10 zdrojů */}
+                <div className="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80 flex-1 flex flex-col justify-between">
+                  <div className="mb-2">
+                    <h3 className="text-sm font-bold text-[#1E1E1E]">
+                      TOP 10 nejefektivnějších zdrojů objednávek
+                    </h3>
+                    <p className="text-[11px] text-slate-500">
+                      Seřazeno dle počtu objednávek (s CPA v tooltipu)
+                    </p>
+                  </div>
+                  <div className="space-y-2.5 my-auto">
+                    {filteredSources.slice(0, 7).map((s) => {
+                      const maxVal = filteredSources[0]?.orders || 1;
+                      const pct = Math.max(8, (s.orders / maxVal) * 100);
+                      return (
+                        <div key={`${s.source}-${s.medium}`} className="flex items-center gap-3 text-xs">
+                          <span className="w-28 truncate text-right text-slate-600 font-medium">
+                            {s.source} <span className="text-[10px] text-slate-400">({s.medium})</span>
+                          </span>
+                          <div className="flex-1 bg-slate-100 h-5 rounded overflow-hidden flex items-center">
+                            <div
+                              style={{ width: `${pct}%` }}
+                              title={`CPA: ${s.cpa.toFixed(0)} Kč | CR: ${s.cr.toFixed(1)}%`}
+                              className="bg-[#FDB913] h-full rounded flex items-center justify-end pr-2 text-[10px] font-bold text-[#1E1E1E]"
+                            >
+                              {s.orders}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* PRAVÝ SLOUPEC (3/12): 3 Insight Karty pod sebou přesně jako v image_5cb78c68.png */}
+              <div className="lg:col-span-3 flex flex-col gap-4">
+                <div className="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80 flex-1 flex flex-col justify-center">
+                  <span className="text-xs font-bold text-[#1E1E1E]">
+                    Nejefektivnější zdroj objednávek
+                  </span>
+                  <span className="text-xl font-extrabold text-[#D97706] mt-2">
+                    google (cpc)
+                  </span>
+                  <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                    <strong>31 objednávek (35,2 %)</strong> ze všech rezervací při průměrné CPA{' '}
+                    <strong>542 Kč</strong>.
+                  </p>
+                </div>
+
+                <div className="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80 flex-1 flex flex-col justify-center">
+                  <span className="text-xs font-bold text-[#1E1E1E]">
+                    Nejúspěšnější marketingová kampaň
+                  </span>
+                  <span className="text-xl font-extrabold text-[#D97706] mt-2">
+                    Brand_Letenky_CZ_Search
+                  </span>
+                  <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                    <strong>24 objednávek (27,3 %)</strong> bylo realizováno přes tuto akviziční kampaň.
+                  </p>
+                </div>
+
+                <div className="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80 flex-1 flex flex-col justify-center">
+                  <span className="text-xs font-bold text-[#1E1E1E]">
+                    Nejžádanější cílová destinace
+                  </span>
+                  <span className="text-xl font-extrabold text-[#D97706] mt-2">
+                    Fiumicino (Řím)
+                  </span>
+                  <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                    <strong>32 letenek (21,3 %)</strong> z celkového počtu směřovalo na letiště Řím Fiumicino.
+                  </p>
                 </div>
               </div>
             </section>
@@ -841,225 +980,167 @@ export default function App() {
 
         {activeTab === 'page2' && (
           <>
-            {/* Horní lišta Stránky 2 */}
-            <section className="bg-white rounded-xl border-2 border-[#FDB913] shadow-sm px-5 py-3.5 flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <h2 className="text-lg font-bold text-[#1E1E1E] tracking-tight">
-                  DESTINACE, GEOGRAFIE & SEZÓNNOST LETENEK (BONUS)
-                </h2>
-                <p className="text-xs text-slate-500">
-                  Analýza TOP 5 destinací v čase, geografická bublinová mapa a matice stavů objednávek
-                </p>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex flex-col">
-                  <label className="text-[10px] font-semibold uppercase text-slate-500 mb-0.5">
-                    Stav objednávky [datastav.nazev]
-                  </label>
-                  <select
-                    value={selectedStatus}
-                    onChange={(e) => setSelectedStatus(e.target.value)}
-                    className="bg-[#F8FAFC] border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium text-[#1E1E1E]"
-                  >
-                    <option value="ALL">Všechny stavy</option>
-                    <option value="Vystaveno">Vystaveno</option>
-                    <option value="Stornováno">Stornováno</option>
-                    <option value="Změněno">Změněno</option>
-                    <option value="Čeká na platbu">Čeká na platbu</option>
-                  </select>
-                </div>
-
-                <div className="flex flex-col">
-                  <label className="text-[10px] font-semibold uppercase text-slate-500 mb-0.5">
-                    Země / Destinace [datadestinace]
-                  </label>
-                  <select
-                    value={selectedCountry}
-                    onChange={(e) => setSelectedCountry(e.target.value)}
-                    className="bg-[#F8FAFC] border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium text-[#1E1E1E]"
-                  >
-                    <option value="ALL">Všechny země</option>
-                    {DESTINATION_DATA.map((d) => (
-                      <option key={d.country} value={d.country}>
-                        {d.country} ({d.city})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex flex-col">
-                  <label className="text-[10px] font-semibold uppercase text-slate-500 mb-0.5">
-                    Měsíc [Dim_Date.RokMesicText]
-                  </label>
-                  <select
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
-                    className="bg-[#F8FAFC] border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium text-[#1E1E1E]"
-                  >
-                    <option value="ALL">Všechny měsíce (2024)</option>
-                    {MONTHLY_DATA.map((m) => (
-                      <option key={m.month} value={m.month}>
-                        {m.month}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </section>
-
-            {/* Horní graf (Šířka: celá 1872px, Výška: 380px): Line Chart Top 5 destinací */}
-            <section className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs">
-              <div className="flex items-center justify-between mb-4">
+            {/* Horní graf: Striktně TOP 5 destinací v čase dle aktivních měsíců (bez Blank a bez nulových letišť) */}
+            <section className="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80">
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
                 <div>
-                  <h3 className="text-sm font-bold text-[#1E1E1E]">
-                    VÝVOJ POPULARITY TOP 5 DESTINACÍ V ČASE DLE MĚSÍCŮ (datadestinace[nazev])
-                  </h3>
+                  <h2 className="text-sm font-bold text-[#1E1E1E] uppercase">
+                    SEZÓNNOST A VÝVOJ POPULARITY TOP 5 DESTINACÍ V ČASE DLE MĚSÍCŮ
+                  </h2>
                   <p className="text-xs text-slate-500">
-                    Line Chart (X: 24 px, Y: 120 px, Šířka: 1872 px, Výška: 380 px)
+                    Měřítko [Pocet Letenek (Top 5)] striktně zobrazuje pouze 5 nejprodávanějších letišť a pouze měsíce s rezervacemi (2023-08 až 2023-12)
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-4 text-xs">
-                  {DESTINATION_DATA.slice(0, 5).map((d, i) => {
+                  {top5Destinations.map((d, i) => {
                     const colors = ['#FDB913', '#1E1E1E', '#002B49', '#10B981', '#EF4444'];
                     return (
                       <span key={d.city} className="flex items-center gap-1.5 font-semibold">
                         <span
-                          className="w-3 h-3 rounded-full inline-block"
+                          className="w-3 h-3 rounded-full"
                           style={{ backgroundColor: colors[i] }}
                         />
-                        {d.city}
+                        {i + 1}. {d.city} ({d.total})
                       </span>
                     );
                   })}
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-2 pt-2 items-end h-56 border-b border-slate-200 pb-2 px-2">
-                {MONTHLY_DATA.map((m) => {
-                  const top5 = DESTINATION_DATA.slice(0, 5);
-                  const colors = ['#FDB913', '#1E1E1E', '#002B49', '#10B981', '#EF4444'];
-                  return (
-                    <div
-                      key={m.month}
-                      className={`flex flex-col items-center h-full justify-end group ${
-                        selectedMonth !== 'ALL' && selectedMonth !== m.month ? 'opacity-30' : ''
-                      }`}
-                    >
-                      <div className="w-full flex items-end justify-center gap-1 h-44">
-                        {top5.map((dest, idx) => {
-                          const val = dest.monthly[m.month] || 200;
-                          const hPct = Math.round((val / 1300) * 100);
+              {/* Spojnicový graf 5 TOP destinací */}
+              <div className="pt-2">
+                <svg viewBox="0 0 900 220" className="w-full h-56 overflow-visible">
+                  {[0, 3, 6, 9].map((tick) => {
+                    const y = 180 - (tick / 10) * 150;
+                    return (
+                      <g key={tick}>
+                        <line x1="50" y1={y} x2="860" y2={y} stroke="#E2E8F0" strokeDasharray="3 3" />
+                        <text x="18" y={y + 4} className="text-[11px] fill-slate-400">
+                          {tick}
+                        </text>
+                      </g>
+                    );
+                  })}
+
+                  {top5Destinations.map((dest, idx) => {
+                    const colors = ['#FDB913', '#1E1E1E', '#002B49', '#10B981', '#EF4444'];
+                    const pts = MONTHLY_DATA.map((m, mIdx) => {
+                      const x = 110 + mIdx * 175;
+                      const val = dest.monthly[m.month] ?? 0;
+                      const y = 180 - (val / 10) * 150;
+                      return `${x},${y}`;
+                    }).join(' ');
+                    return (
+                      <g key={dest.city}>
+                        <polyline
+                          fill="none"
+                          stroke={colors[idx]}
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          points={pts}
+                        />
+                        {MONTHLY_DATA.map((m, mIdx) => {
+                          const x = 110 + mIdx * 175;
+                          const val = dest.monthly[m.month] ?? 0;
+                          const y = 180 - (val / 10) * 150;
                           return (
-                            <div
-                              key={dest.city}
-                              style={{
-                                height: `${hPct}%`,
-                                backgroundColor: colors[idx],
-                              }}
-                              title={`${dest.city} (${m.month}): ${val} letenek`}
-                              className="w-2.5 rounded-t transition-all group-hover:brightness-110"
-                            />
+                            <g key={m.month}>
+                              <circle cx={x} cy={y} r="4" fill={colors[idx]} stroke="#FFF" strokeWidth="1.5" />
+                              <text
+                                x={x}
+                                y={y - 8}
+                                textAnchor="middle"
+                                className="text-[10px] font-bold fill-slate-700"
+                              >
+                                {val}
+                              </text>
+                            </g>
                           );
                         })}
-                      </div>
-                      <span className="text-[11px] font-semibold text-slate-600 mt-2">
-                        {m.month.slice(5)}. měs
-                      </span>
-                    </div>
-                  );
-                })}
+                      </g>
+                    );
+                  })}
+
+                  {MONTHLY_DATA.map((m, mIdx) => {
+                    const x = 110 + mIdx * 175;
+                    return (
+                      <text
+                        key={m.month}
+                        x={x}
+                        y="204"
+                        textAnchor="middle"
+                        className="text-xs font-bold fill-slate-700"
+                      >
+                        {m.month}
+                      </text>
+                    );
+                  })}
+                </svg>
               </div>
             </section>
 
-            {/* Spodní část: Levá Bublinová mapa (900px) + Pravá Matice a Analytická poznámka (956px) */}
+            {/* Spodní sekce Stránky 2: Mapa + Matice s odfiltrovanými nulovými letišti */}
             <section className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-              {/* Spodní levá část: Bublinová mapa */}
-              <div className="lg:col-span-6 bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between">
-                <div className="mb-3 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-sm font-bold text-[#1E1E1E]">
-                      BUBLINOVÁ MAPA DESTINACÍ DLE POČTU LETENEK (#FDB913)
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                      Map visual (X: 24 px, Y: 516 px, Šířka: 900 px, Výška: 520 px) • dataCategory: Place
-                    </p>
-                  </div>
-                </div>
+              <div className="lg:col-span-6 bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80">
+                <h3 className="text-sm font-bold text-[#1E1E1E] mb-1">
+                  GEOGRAFICKÁ MAPA AKTIVNÍCH DESTINACÍ DLE POČTU PRODÁVANÝCH LETENEK
+                </h3>
+                <p className="text-xs text-slate-500 mb-3">
+                  Zobrazena pouze letiště z tabulky Dim_Letiste s reálnými objednávkami
+                </p>
 
-                <div className="relative bg-[#002B49] rounded-xl h-96 overflow-hidden flex items-center justify-center p-6">
-                  {/* Stylizovaná souřadnicová síť mapy */}
-                  <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px]" />
-                  <div className="relative w-full h-full">
-                    {filteredDestinations.map((dest) => {
-                      const xPct = Math.min(90, Math.max(12, ((dest.lon + 80) / 145) * 100));
-                      const yPct = Math.min(86, Math.max(15, ((60 - dest.lat) / 45) * 100));
-                      const sizePx = Math.max(34, Math.min(76, Math.round(dest.total / 135)));
-                      return (
+                <div className="relative bg-[#002B49] rounded-xl h-80 overflow-hidden p-4">
+                  <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:18px_18px]" />
+                  {filteredDestinations.map((dest) => {
+                    const xPct = Math.min(88, Math.max(12, ((dest.lon + 85) / 195) * 100));
+                    const yPct = Math.min(84, Math.max(16, ((60 - dest.lat) / 52) * 100));
+                    const sizePx = Math.max(30, Math.min(60, dest.total * 1.8));
+                    return (
+                      <div
+                        key={dest.city}
+                        style={{ left: `${xPct}%`, top: `${yPct}%` }}
+                        className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+                      >
                         <div
-                          key={dest.city}
-                          style={{ left: `${xPct}%`, top: `${yPct}%` }}
-                          className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group"
+                          style={{ width: `${sizePx}px`, height: `${sizePx}px` }}
+                          className="rounded-full bg-[#FDB913] border-2 border-white shadow-md flex items-center justify-center text-xs font-extrabold text-[#1E1E1E]"
                         >
-                          <div
-                            style={{ width: `${sizePx}px`, height: `${sizePx}px` }}
-                            className="rounded-full bg-[#FDB913]/85 border-2 border-white shadow-lg flex items-center justify-center text-[11px] font-extrabold text-[#1E1E1E] group-hover:scale-110 transition cursor-pointer"
-                          >
-                            {dest.total.toLocaleString('cs-CZ')}
-                          </div>
-                          <span className="mt-1 px-2 py-0.5 rounded bg-black/75 text-white text-[10px] font-semibold whitespace-nowrap">
-                            {dest.city}
-                          </span>
+                          {dest.total}
                         </div>
-                      );
-                    })}
-                  </div>
+                        <span className="mt-1 px-2 py-0.5 rounded bg-black/75 text-white text-[10px] font-semibold whitespace-nowrap">
+                          {dest.city}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Spodní pravá část: Matice destinací vs. stavy objednávky + Analytická poznámka */}
               <div className="lg:col-span-6 flex flex-col gap-4">
-                <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex-1">
-                  <h3 className="text-sm font-bold text-[#1E1E1E] mb-1">
-                    MATICE: MĚSTA / DESTINACE VS. STAVY OBJEDNÁVKY
+                <div className="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80 flex-1">
+                  <h3 className="text-sm font-bold text-[#1E1E1E] mb-2">
+                    MATICE DESTINACÍ VS. STAVY OBJEDNÁVKY (POUZE AKTIVNÍ LETIŠTĚ)
                   </h3>
-                  <p className="text-xs text-slate-500 mb-3">
-                    PivotTable (X: 940 px, Y: 516 px, Šířka: 956 px, Výška: 356 px)
-                  </p>
-
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs border-collapse">
                       <thead>
                         <tr className="border-b-2 border-[#FDB913] bg-slate-50 text-left">
-                          <th className="py-2 px-3 font-bold">Destinace (nazev)</th>
-                          <th className="py-2 px-3 font-bold text-right text-[#10B981]">Vystaveno</th>
-                          <th className="py-2 px-3 font-bold text-right text-[#EF4444]">Stornováno</th>
-                          <th className="py-2 px-3 font-bold text-right text-amber-600">Změněno</th>
-                          <th className="py-2 px-3 font-bold text-right text-slate-500">Čeká na platbu</th>
-                          <th className="py-2 px-3 font-bold text-right">Celkem</th>
+                          <th className="py-2 px-2.5 font-bold">Letiště</th>
+                          <th className="py-2 px-2.5 font-bold text-right text-[#10B981]">Vystaveno</th>
+                          <th className="py-2 px-2.5 font-bold text-right text-[#EF4444]">Stornováno</th>
+                          <th className="py-2 px-2.5 font-bold text-right">Změněno</th>
+                          <th className="py-2 px-2.5 font-bold text-right">Celkem</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
                         {filteredDestinations.map((d) => (
                           <tr key={d.city} className="hover:bg-amber-50/40">
-                            <td className="py-2 px-3 font-semibold">{d.city}</td>
-                            <td className="py-2 px-3 text-right font-medium">
-                              {d.vystaveno.toLocaleString('cs-CZ')}
-                            </td>
-                            <td className="py-2 px-3 text-right text-[#EF4444]">
-                              {d.stornovano.toLocaleString('cs-CZ')}
-                            </td>
-                            <td className="py-2 px-3 text-right">
-                              {d.zmeneno.toLocaleString('cs-CZ')}
-                            </td>
-                            <td className="py-2 px-3 text-right text-slate-500">
-                              {d.cekaNaPlatbu.toLocaleString('cs-CZ')}
-                            </td>
-                            <td className="py-2 px-3 text-right font-bold">
-                              {(d.vystaveno + d.stornovano + d.zmeneno + d.cekaNaPlatbu).toLocaleString(
-                                'cs-CZ'
-                              )}
-                            </td>
+                            <td className="py-2 px-2.5 font-semibold">{d.city}</td>
+                            <td className="py-2 px-2.5 text-right">{d.vystaveno}</td>
+                            <td className="py-2 px-2.5 text-right text-[#EF4444]">{d.stornovano}</td>
+                            <td className="py-2 px-2.5 text-right">{d.zmeneno}</td>
+                            <td className="py-2 px-2.5 text-right font-bold">{d.total}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -1067,33 +1148,14 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Analytická poznámka (Text box s odpovědí na bonusovou otázku) */}
-                <div className="bg-white rounded-xl border-2 border-[#FDB913] p-4 shadow-xs">
-                  <div className="flex items-start gap-2.5">
-                    <Info className="w-5 h-5 text-[#FDB913] shrink-0 mt-0.5" />
-                    <div className="text-xs space-y-1.5">
-                      <h4 className="font-bold text-[#1E1E1E]">
-                        ANALYTICKÁ POZNÁMKA – CHYBĚJÍCÍ DATA PRO VÝPOČET CPA / ROAS / CTR V DATABÁZI:
-                      </h4>
-                      <ul className="list-disc list-inside text-slate-700 space-y-1">
-                        <li>
-                          <strong>Chybějící imprese (Impressions) v dataAds:</strong> Tabulka obsahuje pouze{' '}
-                          <code>AdsCost</code> a <code>AdsClicks</code>, bez počtu zobrazení nelze vypočítat{' '}
-                          <strong>CTR %</strong> (Kliky / Imprese) ani CPM.
-                        </li>
-                        <li>
-                          <strong>Chybějící nekonvertující sessions v dataGA:</strong> Tabulka obsahuje pouze záznamy s{' '}
-                          <code>rezervacni_kod</code>, nikoliv celkovou návštěvnost webu pro skutečný e-commerce CR %.
-                        </li>
-                        <li>
-                          <strong>Týdenní agregace nákladů (WeekGroup) a absence tržeb/marže:</strong> Náklady v{' '}
-                          <code>dataAds</code> jsou agregované na týdny bez přímé vazby na <code>id_rezervace</code> a v{' '}
-                          <code>dataCRM</code>/<code>dataLet</code> chybí cena letenky či marže v Kč pro výpočet{' '}
-                          <strong>ROAS / PNO</strong>.
-                        </li>
-                      </ul>
-                    </div>
+                <div className="bg-white rounded-2xl border-2 border-[#FDB913] p-4 shadow-xs text-xs space-y-1">
+                  <div className="font-bold text-[#1E1E1E] flex items-center gap-1.5">
+                    <Info className="w-4 h-4 text-[#FDB913]" />
+                    ANALYTICKÁ POZNÁMKA – DATOVÉ LIMITACE PRO VÝPOČET CPA, ROAS & CTR:
                   </div>
+                  <p className="text-slate-600">
+                    1) Chybějící <strong>Impressions</strong> v <code>dataAds</code> (nelze spočítat CTR). 2) Chybějící nekonvertující sessions v <code>dataGA</code>. 3) Týdenní agregace nákladů <code>WeekGroup</code> bez vazby na <code>id_rezervace</code> a absence tržby/marže v Kč pro výpočet <strong>ROAS</strong>.
+                  </p>
                 </div>
               </div>
             </section>
@@ -1101,128 +1163,34 @@ export default function App() {
         )}
 
         {activeTab === 'model' && (
-          <section className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-6">
-            <div>
-              <h2 className="text-lg font-bold text-[#1E1E1E]">
-                ARCHITEKTURA DATOVÉHO MODELU (ukol.SemanticModel)
-              </h2>
-              <p className="text-xs text-slate-500">
-                Star-schema rozšířené o přemosťovací dimenzi Dim_Campaign, kalendář Dim_Date a 1:1 obousměrnou relaci mezi dataCRM a dataGA
-              </p>
+          <section className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200/80 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-base font-bold text-[#1E1E1E]">
+                  Aktualizované TMDL kódy v ukol.SemanticModel
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Zapsáno přímo do souborů Dim_Letiste.tmdl, Dim_Date.tmdl, _Measures.tmdl a relationships.tmdl
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(TMDL_CODE_PREVIEW);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FDB913] text-[#1E1E1E] text-xs font-bold cursor-pointer"
+              >
+                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {copied ? 'Zkopírováno' : 'Kopírovat TMDL změny'}
+              </button>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="border-2 border-[#FDB913] rounded-xl p-4 bg-amber-50/20">
-                <div className="flex items-center gap-2 font-bold text-sm mb-2">
-                  <Layers className="w-4 h-4 text-[#FDB913]" />
-                  1. Kalendářní dimenze Dim_Date (1:N)
-                </div>
-                <p className="text-xs text-slate-600 mb-2">
-                  Dynamická DAX tabulka pokrývající kompletní roky ze všech faktových tabulek, napojená 1:N na:
-                </p>
-                <ul className="text-xs font-mono space-y-1 text-slate-800">
-                  <li>• Dim_Date[Date] 1 ──► * dataCRM[datum_rezervace]</li>
-                  <li>• Dim_Date[Date] 1 ──► * dataAds[WeekGroup]</li>
-                  <li>• RokMesicText řazen dle RokMesicKod</li>
-                </ul>
-              </div>
-
-              <div className="border-2 border-[#1E1E1E] rounded-xl p-4 bg-slate-50">
-                <div className="flex items-center gap-2 font-bold text-sm mb-2">
-                  <Layers className="w-4 h-4 text-[#1E1E1E]" />
-                  2. Propojení CRM & GA (1:1 Obousměrně)
-                </div>
-                <p className="text-xs text-slate-600 mb-2">
-                  Zachovány samostatné tabulky propojené přes rezervační kód:
-                </p>
-                <ul className="text-xs font-mono space-y-1 text-slate-800">
-                  <li>• dataCRM[locator] 1 ◄──► 1 dataGA[customEvent:rezervacni_kod]</li>
-                  <li>• crossFilteringBehavior: bothDirections</li>
-                  <li>• Umožňuje filtrovat CRM objednávky a letenky podle GA zdrojů</li>
-                </ul>
-              </div>
-
-              <div className="border-2 border-emerald-500 rounded-xl p-4 bg-emerald-50/20">
-                <div className="flex items-center gap-2 font-bold text-sm mb-2">
-                  <Layers className="w-4 h-4 text-emerald-600" />
-                  3. Dim_Campaign (Zamezení M:N)
-                </div>
-                <p className="text-xs text-slate-600 mb-2">
-                  Unikátní číselník kampaní sjednocující názvy kampaní z Ads a GA:
-                </p>
-                <ul className="text-xs font-mono space-y-1 text-slate-800">
-                  <li>• Dim_Campaign[sessionCampaignName] 1 ──► * dataAds</li>
-                  <li>• Dim_Campaign[sessionCampaignName] 1 ◄──► * dataGA</li>
-                </ul>
-              </div>
-            </div>
+            <pre className="bg-[#1E1E1E] text-slate-100 p-4 rounded-xl text-xs font-mono overflow-x-auto">
+              {TMDL_CODE_PREVIEW}
+            </pre>
           </section>
         )}
-
-        {activeTab === 'code' && (
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex flex-col">
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <h3 className="text-sm font-bold text-[#1E1E1E]">
-                    ukol.SemanticModel/definition/tables/_Measures.tmdl
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    Všechna DAX měřítka uložená přímo v modelu
-                  </p>
-                </div>
-                <button
-                  onClick={() => copyCode('measures', TMDL_MEASURES_CODE)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FDB913] text-[#1E1E1E] text-xs font-bold cursor-pointer"
-                >
-                  {copiedBlock === 'measures' ? (
-                    <>
-                      <Check className="w-3.5 h-3.5" /> Zkopírováno
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" /> Kopírovat TMDL
-                    </>
-                  )}
-                </button>
-              </div>
-              <pre className="bg-[#1E1E1E] text-slate-100 p-4 rounded-lg text-xs font-mono overflow-x-auto flex-1">
-                {TMDL_MEASURES_CODE}
-              </pre>
-            </div>
-
-            <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex flex-col">
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <h3 className="text-sm font-bold text-[#1E1E1E]">
-                    ukol.SemanticModel/definition/relationships.tmdl
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    Relace 1:1 dataCRM &lt;-&gt; dataGA, 1:N Dim_Date a Dim_Campaign
-                  </p>
-                </div>
-                <button
-                  onClick={() => copyCode('rels', TMDL_RELATIONSHIPS_CODE)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FDB913] text-[#1E1E1E] text-xs font-bold cursor-pointer"
-                >
-                  {copiedBlock === 'rels' ? (
-                    <>
-                      <Check className="w-3.5 h-3.5" /> Zkopírováno
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" /> Kopírovat TMDL
-                    </>
-                  )}
-                </button>
-              </div>
-              <pre className="bg-[#1E1E1E] text-slate-100 p-4 rounded-lg text-xs font-mono overflow-x-auto flex-1">
-                {TMDL_RELATIONSHIPS_CODE}
-              </pre>
-            </div>
-          </section>
-        )}
-      </main>
+      </div>
     </div>
   );
 }

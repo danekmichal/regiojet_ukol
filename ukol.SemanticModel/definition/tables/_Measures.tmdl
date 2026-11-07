@@ -1,7 +1,11 @@
 table _Measures
 	lineageTag: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6e
 
-	measure 'Pocet Objednavek (CRM)' = DISTINCTCOUNT(dataCRM[id_rezervace])
+	measure 'Pocet Objednavek (CRM)' =
+			CALCULATE(
+			    DISTINCTCOUNT(dataCRM[id_rezervace]),
+			    KEEPFILTERS(NOT ISBLANK(dataCRM[datum_rezervace]))
+			)
 		formatString: #,0
 		displayFolder: 01. Objednávky & Letenky
 		lineageTag: m0000001-0000-4000-8000-000000000001
@@ -16,10 +20,36 @@ table _Measures
 		displayFolder: 01. Objednávky & Letenky
 		lineageTag: m0000002-0000-4000-8000-000000000002
 
-	measure 'Pocet Letenek' = COUNTROWS(dataLet)
+	measure 'Pocet Letenek' =
+			CALCULATE(
+			    COUNTROWS(dataLet),
+			    KEEPFILTERS(NOT ISBLANK(dataCRM[id_rezervace])),
+			    KEEPFILTERS(NOT ISBLANK('Dim_Date'[RokMesicText]))
+			)
 		formatString: #,0
 		displayFolder: 01. Objednávky & Letenky
 		lineageTag: m0000003-0000-4000-8000-000000000003
+
+	measure 'Pocet Letenek (Top 5)' =
+			VAR _Top5Letiste =
+			    TOPN(
+			        5,
+			        ALLSELECTED(Dim_Letiste[Letiště]),
+			        [Pocet Letenek],
+			        DESC
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(SELECTEDVALUE('Dim_Date'[RokMesicText])),
+			        BLANK(),
+			        CALCULATE(
+			            [Pocet Letenek],
+			            KEEPFILTERS(_Top5Letiste)
+			        )
+			    )
+		formatString: #,0
+		displayFolder: 01. Objednávky & Letenky
+		lineageTag: m0000014-0000-4000-8000-000000000014
 
 	measure 'Pocet Kampani' = DISTINCTCOUNTNOBLANK(dataAds[sessionCampaignName])
 		formatString: #,0
@@ -71,7 +101,7 @@ table _Measures
 			RETURN
 			    SWITCH(
 			        TRUE(),
-			        ISBLANK(_DeltaPct), "— (bez historie)",
+			        ISBLANK(_DeltaPct), "—",
 			        _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (+" & FORMAT(_DeltaAbs, "#,0") & ")",
 			        _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (" & FORMAT(_DeltaAbs, "#,0") & ")",
 			        "▬ 0.0 % (0)"
@@ -91,6 +121,75 @@ table _Measures
 			    )
 		displayFolder: 03. Time Intelligence (MoM)
 		lineageTag: m0000013-0000-4000-8000-000000000013
+
+	measure 'Top Zdroj Nazev' =
+			VAR _Top =
+			    TOPN(
+			        1,
+			        FILTER(ALLSELECTED(dataGA[sessionSource]), NOT ISBLANK(dataGA[sessionSource]) && dataGA[sessionSource] <> "(not set)"),
+			        [Pocet Objednavek (CRM)],
+			        DESC
+			    )
+			RETURN
+			    MAXX(_Top, dataGA[sessionSource])
+		displayFolder: 04. Insight Karty
+		lineageTag: m0000015-0000-4000-8000-000000000015
+
+	measure 'Top Zdroj Popis' =
+			VAR _Name = [Top Zdroj Nazev]
+			VAR _Total = [Pocet Objednavek (CRM)]
+			VAR _TopVal = CALCULATE([Pocet Objednavek (CRM)], dataGA[sessionSource] = _Name)
+			VAR _Share = DIVIDE(_TopVal, _Total, 0)
+			RETURN
+			    FORMAT(_TopVal, "#,0") & " objednávek (" & FORMAT(_Share, "0.0 %") & " ze všech rezervací)"
+		displayFolder: 04. Insight Karty
+		lineageTag: m0000016-0000-4000-8000-000000000016
+
+	measure 'Top Kampan Nazev' =
+			VAR _Top =
+			    TOPN(
+			        1,
+			        FILTER(ALLSELECTED(dataGA[sessionCampaignName]), NOT ISBLANK(dataGA[sessionCampaignName]) && dataGA[sessionCampaignName] <> "(not set)"),
+			        [Pocet Objednavek (CRM)],
+			        DESC
+			    )
+			RETURN
+			    COALESCE(MAXX(_Top, dataGA[sessionCampaignName]), "Brand / Performance")
+		displayFolder: 04. Insight Karty
+		lineageTag: m0000017-0000-4000-8000-000000000017
+
+	measure 'Top Kampan Popis' =
+			VAR _Name = [Top Kampan Nazev]
+			VAR _Total = [Pocet Objednavek (CRM)]
+			VAR _TopVal = CALCULATE([Pocet Objednavek (CRM)], dataGA[sessionCampaignName] = _Name)
+			VAR _Share = DIVIDE(_TopVal, _Total, 0)
+			RETURN
+			    FORMAT(_TopVal, "#,0") & " objednávek (" & FORMAT(_Share, "0.0 %") & " podíl kampaně)"
+		displayFolder: 04. Insight Karty
+		lineageTag: m0000018-0000-4000-8000-000000000018
+
+	measure 'Top Destinace Nazev' =
+			VAR _Top =
+			    TOPN(
+			        1,
+			        ALLSELECTED(Dim_Letiste[Letiště]),
+			        [Pocet Letenek],
+			        DESC
+			    )
+			RETURN
+			    MAXX(_Top, Dim_Letiste[Letiště])
+		displayFolder: 04. Insight Karty
+		lineageTag: m0000019-0000-4000-8000-000000000019
+
+	measure 'Top Destinace Popis' =
+			VAR _Name = [Top Destinace Nazev]
+			VAR _Total = [Pocet Letenek]
+			VAR _TopVal = CALCULATE([Pocet Letenek], Dim_Letiste[Letiště] = _Name)
+			VAR _Share = DIVIDE(_TopVal, _Total, 0)
+			RETURN
+			    FORMAT(_TopVal, "#,0") & " prodaných letenek (" & FORMAT(_Share, "0.0 %") & " z celku)"
+		displayFolder: 04. Insight Karty
+		lineageTag: m0000020-0000-4000-8000-000000000020
 
 	column Value
 		dataType: int64

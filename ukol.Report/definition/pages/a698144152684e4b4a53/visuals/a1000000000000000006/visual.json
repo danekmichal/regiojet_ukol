@@ -2,15 +2,15 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "a1000000000000000006",
   "position": {
-    "x": 968,
-    "y": 120,
+    "x": 780,
+    "y": 112,
     "z": 8,
-    "height": 130,
-    "width": 456,
+    "height": 132,
+    "width": 360,
     "tabOrder": 8
   },
   "visual": {
-    "visualType": "card",
+    "visualType": "multiRowCard",
     "query": {
       "queryState": {
         "Values": {
@@ -23,30 +23,15 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "CPA"
+                  "Property": "Pocet Kampani"
                 }
               },
-              "queryRef": "_Measures.CPA",
-              "nativeQueryRef": "Průměrná CPA (Kč)"
+              "queryRef": "_Measures.Pocet Kampani",
+              "nativeQueryRef": "Běžící kampaně v období"
             }
           ]
         }
       }
-    },
-    "objects": {
-      "categoryLabels": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ]
     },
     "visualContainerObjects": {
       "title": [
@@ -62,7 +47,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'PRŮMĚRNÁ CPA (KČ / OBJEDNÁVKA)'"
+                  "Value": "'Aktivních kampaní'"
                 }
               }
             }
@@ -108,7 +93,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#FDB913'"
+                      "Value": "'#E2E8F0'"
                     }
                   }
                 }
@@ -117,7 +102,7 @@
             "radius": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "16D"
                 }
               }
             }

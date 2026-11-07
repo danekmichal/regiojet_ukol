@@ -3,11 +3,11 @@
   "name": "a1000000000000000008",
   "position": {
     "x": 24,
-    "y": 266,
-    "z": 10,
-    "height": 790,
-    "width": 800,
-    "tabOrder": 10
+    "y": 661,
+    "z": 12,
+    "height": 395,
+    "width": 820,
+    "tabOrder": 12
   },
   "visual": {
     "visualType": "pivotTable",
@@ -27,7 +27,7 @@
                 }
               },
               "queryRef": "Dim_Date.RokMesicText",
-              "nativeQueryRef": "Měsíc (YYYY-MM)",
+              "nativeQueryRef": "Měsíc / Rok",
               "active": true
             }
           ]
@@ -70,25 +70,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Objednavky MoM %"
-                }
-              },
-              "queryRef": "_Measures.Objednavky MoM %",
-              "nativeQueryRef": "MoM Změna %"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
                   "Property": "MoM Trend Indikator"
                 }
               },
               "queryRef": "_Measures.MoM Trend Indikator",
-              "nativeQueryRef": "MoM Trend"
+              "nativeQueryRef": "Meziměsíční změna (MoM)"
             }
           ]
         }
@@ -133,29 +119,6 @@
             }
           },
           "selector": {
-            "metadata": "_Measures.Objednavky MoM %"
-          }
-        },
-        {
-          "properties": {
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Measure": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "_Measures"
-                        }
-                      },
-                      "Property": "MoM Barva"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "selector": {
             "metadata": "_Measures.MoM Trend Indikator"
           }
         }
@@ -175,7 +138,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'MĚSÍČNÍ VÝVOJ OBJEDNÁVEK, LETENEK A MEZIMĚSÍČNÍ ZMĚNA (MoM)'"
+                  "Value": "'Měsíční přehled objednávek, letenek a meziměsíční změny (MoM)'"
                 }
               }
             }

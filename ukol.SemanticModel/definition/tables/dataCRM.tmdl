@@ -26,6 +26,19 @@ table dataCRM
 
 		annotation SummarizationSetBy = Automatic
 
+	column DatumRezervaceDen =
+			IF (
+			    NOT ISBLANK ( dataCRM[datum_rezervace] ),
+			    DATE ( YEAR ( dataCRM[datum_rezervace] ), MONTH ( dataCRM[datum_rezervace] ), DAY ( dataCRM[datum_rezervace] ) ),
+			    BLANK ()
+			)
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 99a8b7c6-d5e4-4f3a-8b2c-1d0e9f8a7b6c
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	partition dataCRM = m
 		mode: import
 		source =

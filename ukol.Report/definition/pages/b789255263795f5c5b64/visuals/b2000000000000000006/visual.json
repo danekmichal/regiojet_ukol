@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "datadestinace"
+                      "Entity": "Dim_Letiste"
                     }
                   },
-                  "Property": "nazev"
+                  "Property": "Letiště"
                 }
               },
-              "queryRef": "datadestinace.nazev",
-              "nativeQueryRef": "Destinace (Město)",
+              "queryRef": "Dim_Letiste.Letiště",
+              "nativeQueryRef": "Letiště",
               "active": true
             }
           ]
@@ -64,7 +64,7 @@
                 }
               },
               "queryRef": "_Measures.Pocet Objednavek (CRM)",
-              "nativeQueryRef": "Počet objednávek (CRM)"
+              "nativeQueryRef": "Počet objednávek"
             }
           ]
         }
@@ -103,7 +103,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'GEOGRAFICKÁ MAPA DESTINACÍ DLE POČTU PRODÁVANÝCH LETENEK'"
+                  "Value": "'Geografická mapa destinací dle počtu prodaných letenek'"
                 }
               }
             }

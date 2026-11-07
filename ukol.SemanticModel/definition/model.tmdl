@@ -15,6 +15,7 @@ annotation PBI_ProTooling = ["DevMode"]
 
 ref table _Measures
 ref table Dim_Campaign
+ref table Dim_Letiste
 ref table dataAds
 ref table DateTableTemplate_f839fb6d-79ac-4d5b-b93c-f8638153668c
 ref table dataCRM

@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "a1000000000000000009",
   "position": {
-    "x": 840,
-    "y": 266,
-    "z": 11,
-    "height": 790,
-    "width": 1056,
-    "tabOrder": 11
+    "x": 860,
+    "y": 661,
+    "z": 14,
+    "height": 395,
+    "width": 560,
+    "tabOrder": 14
   },
   "visual": {
     "visualType": "clusteredBarChart",
@@ -27,7 +27,7 @@
                 }
               },
               "queryRef": "dataGA.sessionSource",
-              "nativeQueryRef": "Zdroj návštěvnosti (sessionSource)",
+              "nativeQueryRef": "Zdroj objednávky",
               "active": true
             }
           ]
@@ -46,7 +46,7 @@
                 }
               },
               "queryRef": "_Measures.Pocet Objednavek (CRM)",
-              "nativeQueryRef": "Počet objednávek (CRM)"
+              "nativeQueryRef": "Počet objednávek"
             }
           ]
         },
@@ -78,7 +78,7 @@
                 }
               },
               "queryRef": "_Measures.Naklady Ads",
-              "nativeQueryRef": "Náklady Ads (Kč)"
+              "nativeQueryRef": "Náklady Ads"
             },
             {
               "field": {
@@ -92,7 +92,7 @@
                 }
               },
               "queryRef": "_Measures.CR %",
-              "nativeQueryRef": "Konverzní poměr (CR %)"
+              "nativeQueryRef": "Konverzní poměr (CR)"
             }
           ]
         }
@@ -161,7 +161,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'TOP 10 NEJEFEKTIVNĚJŠÍCH ZDROJŮ (sessionSource) DLE POČTU OBJEDNÁVEK (S CPA V TOOLTIPU)'"
+                  "Value": "'TOP 10 nejefektivnějších zdrojů objednávek'"
                 }
               }
             }

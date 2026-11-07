@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "a1000000000000000001",
   "position": {
-    "x": 1026,
-    "y": 32,
+    "x": 310,
+    "y": 26,
     "z": 3,
     "height": 64,
     "width": 270,
-    "tabOrder": 3
+    "tabOrder": 2
   },
   "visual": {
     "visualType": "slicer",
@@ -27,7 +27,7 @@
                 }
               },
               "queryRef": "dataGA.sessionSource",
-              "nativeQueryRef": "Zdroj (Source)",
+              "nativeQueryRef": "Zdroj objednávky",
               "active": true
             }
           ]
@@ -58,10 +58,10 @@
                 }
               }
             },
-            "title": {
+            "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Zdroj (sessionSource)'"
+                  "Value": "'Zdroj objednávky'"
                 }
               }
             }

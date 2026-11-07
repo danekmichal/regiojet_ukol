@@ -58,7 +58,7 @@
                 }
               }
             },
-            "title": {
+            "text": {
               "expr": {
                 "Literal": {
                   "Value": "'Měsíc / Rok'"

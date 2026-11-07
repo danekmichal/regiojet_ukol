@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "datadestinace"
+                      "Entity": "Dim_Letiste"
                     }
                   },
-                  "Property": "nazev"
+                  "Property": "Letiště"
                 }
               },
-              "queryRef": "datadestinace.nazev",
-              "nativeQueryRef": "Destinace / Město",
+              "queryRef": "Dim_Letiste.Letiště",
+              "nativeQueryRef": "Letiště",
               "active": true
             }
           ]
@@ -46,7 +46,7 @@
                 }
               },
               "queryRef": "datastav.nazev",
-              "nativeQueryRef": "Stav letenky",
+              "nativeQueryRef": "Stav objednávky",
               "active": true
             }
           ]
@@ -124,7 +124,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'MATICE DESTINACÍ VS. STAVY OBJEDNÁVKY (VYSTAVENO, STORNOVÁNO ATD.)'"
+                  "Value": "'Matice destinací vs. stavy objednávky (Vystaveno, Stornováno atd.)'"
                 }
               }
             }

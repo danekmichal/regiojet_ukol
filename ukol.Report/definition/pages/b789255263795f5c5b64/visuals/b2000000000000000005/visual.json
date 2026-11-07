@@ -27,7 +27,7 @@
                 }
               },
               "queryRef": "Dim_Date.RokMesicText",
-              "nativeQueryRef": "Měsíc (YYYY-MM)",
+              "nativeQueryRef": "Měsíc / Rok",
               "active": true
             }
           ]
@@ -39,14 +39,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "datadestinace"
+                      "Entity": "Dim_Letiste"
                     }
                   },
-                  "Property": "nazev"
+                  "Property": "Letiště"
                 }
               },
-              "queryRef": "datadestinace.nazev",
-              "nativeQueryRef": "Destinace (Město)"
+              "queryRef": "Dim_Letiste.Letiště",
+              "nativeQueryRef": "Letiště"
             }
           ]
         },
@@ -60,11 +60,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Pocet Letenek"
+                  "Property": "Pocet Letenek (Top 5)"
                 }
               },
-              "queryRef": "_Measures.Pocet Letenek",
-              "nativeQueryRef": "Počet letenek"
+              "queryRef": "_Measures.Pocet Letenek (Top 5)",
+              "nativeQueryRef": "Počet letenek (Top 5)"
             }
           ]
         }
@@ -116,7 +116,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'SEZÓNNOST A VÝVOJ POPULARITY TOP 5 DESTINACÍ V ČASE DLE MĚSÍCŮ'"
+                  "Value": "'Sezónnost a vývoj popularity TOP 5 destinací v čase dle měsíců'"
                 }
               }
             }
@@ -125,73 +125,5 @@
       ]
     },
     "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "top5_destinations_filter",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "datadestinace"
-              }
-            },
-            "Property": "nazev"
-          }
-        },
-        "type": "TopN",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "d",
-              "Entity": "datadestinace",
-              "Type": 0
-            },
-            {
-              "Name": "m",
-              "Entity": "_Measures",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "Top": {
-                  "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Source": "d"
-                        }
-                      },
-                      "Property": "nazev"
-                    }
-                  },
-                  "Bottom": false,
-                  "Count": 5,
-                  "OrderBy": [
-                    {
-                      "Direction": 2,
-                      "Expression": {
-                        "Measure": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Source": "m"
-                            }
-                          },
-                          "Property": "Pocet Letenek"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
-    ]
   }
 }

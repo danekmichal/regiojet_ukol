@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "datadestinace"
+                      "Entity": "Dim_Letiste"
                     }
                   },
-                  "Property": "nazev"
+                  "Property": "Letiště"
                 }
               },
-              "queryRef": "datadestinace.nazev",
-              "nativeQueryRef": "Destinace / Město",
+              "queryRef": "Dim_Letiste.Letiště",
+              "nativeQueryRef": "Letiště",
               "active": true
             }
           ]
@@ -58,10 +58,10 @@
                 }
               }
             },
-            "title": {
+            "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Destinace / Město'"
+                  "Value": "'Letiště'"
                 }
               }
             }
