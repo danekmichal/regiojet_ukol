@@ -42,11 +42,11 @@
                       "Entity": "datadestinace"
                     }
                   },
-                  "Property": "nazev"
+                  "Property": "Město destinace"
                 }
               },
-              "queryRef": "datadestinace.nazev",
-              "nativeQueryRef": "Letiště"
+              "queryRef": "datadestinace.Město destinace",
+              "nativeQueryRef": "Město destinace"
             }
           ]
         },
@@ -116,7 +116,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Sezónnost a vývoj popularity TOP 5 destinací v čase dle měsíců'"
+                  "Value": "'Závislost popularity TOP 5 destinací (měst) podle měsíců'"
                 }
               }
             }

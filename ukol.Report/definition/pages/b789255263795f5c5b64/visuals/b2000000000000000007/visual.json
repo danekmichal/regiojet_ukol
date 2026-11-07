@@ -23,11 +23,11 @@
                       "Entity": "datadestinace"
                     }
                   },
-                  "Property": "nazev"
+                  "Property": "Město destinace"
                 }
               },
-              "queryRef": "datadestinace.nazev",
-              "nativeQueryRef": "Letiště",
+              "queryRef": "datadestinace.Město destinace",
+              "nativeQueryRef": "Město destinace",
               "active": true
             }
           ]
@@ -39,14 +39,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "datastav"
+                      "Entity": "Dim_Date"
                     }
                   },
-                  "Property": "nazev"
+                  "Property": "RokMesicText"
                 }
               },
-              "queryRef": "datastav.nazev",
-              "nativeQueryRef": "Stav objednávky",
+              "queryRef": "Dim_Date.RokMesicText",
+              "nativeQueryRef": "Měsíc",
               "active": true
             }
           ]
@@ -124,7 +124,20 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Matice destinací vs. stavy objednávky (Vystaveno, Stornováno atd.)'"
+                  "Value": "'Závislost popularity destinací (měst) podle měsíců'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }
@@ -133,5 +146,62 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "filter_active_cities_matrix",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Pocet Letenek"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "m",
+              "Entity": "_Measures",
+              "Type": 0
+            },
+            {
+              "Name": "d",
+              "Entity": "datadestinace",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Comparison": {
+                  "ComparisonKind": 2,
+                  "Left": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "m"
+                        }
+                      },
+                      "Property": "Pocet Letenek"
+                    }
+                  },
+                  "Right": {
+                    "Literal": {
+                      "Value": "1L"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
   }
 }

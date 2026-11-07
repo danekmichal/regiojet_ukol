@@ -262,6 +262,46 @@ table datadestinace
 
 		annotation SummarizationSetBy = Automatic
 
+	column 'Kontinent destinace' =
+			VAR _City = datadestinace[Město destinace]
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( _City ), BLANK (),
+			        _City IN {
+			            "Bangkok", "Phuket", "Krabi", "Ko Samui", "Singapore", "Kuala Lumpur",
+			            "Denpasar", "Jakarta", "Manila", "Ho Chi Minh City", "Hanoi", "Colombo",
+			            "Male", "New Delhi", "Mumbai", "Lucknow", "Kathmandu", "Dhaka",
+			            "Tokyo", "Osaka", "Seoul", "Taipei", "Hong Kong", "Beijing",
+			            "Shanghai", "Guangzhou", "Ulaanbaatar", "Yerevan", "Tbilisi", "Baku",
+			            "Almaty", "Astana", "Tashkent", "Dubai", "Abu Dhabi", "Sharjah",
+			            "Doha", "Muscat", "Kuwait City", "Riyadh", "Jeddah", "Tel Aviv",
+			            "Amman", "Antalya", "Izmir", "Ankara", "Dalaman", "Bodrum"
+			        }, "Asie & Blízký východ",
+			        _City IN {
+			            "New York", "Chicago", "Los Angeles", "San Francisco", "Miami",
+			            "Washington", "Boston", "Atlanta", "Las Vegas", "Toronto",
+			            "Montreal", "Vancouver", "Mexico City", "Cancun", "Havana", "Punta Cana"
+			        }, "Severní & Střední Amerika",
+			        _City IN {
+			            "Sao Paulo", "Rio de Janeiro", "Buenos Aires", "Santiago",
+			            "Lima", "Bogota", "Puerto Ayora"
+			        }, "Jižní Amerika",
+			        _City IN {
+			            "Hurghada", "Marsa Alam", "Sharm El Sheikh", "Cairo", "Marrakesh",
+			            "Casablanca", "Tunis", "Espargos", "Zanzibar", "Arusha",
+			            "Nairobi", "Port Louis", "Johannesburg", "Cape Town"
+			        }, "Afrika",
+			        _City IN { "Sydney", "Melbourne", "Auckland" }, "Austrálie & Oceánie",
+			        "Evropa"
+			    )
+		dataType: string
+		dataCategory: Continent
+		lineageTag: 7744e84a-24c1-48f1-9c0d-837f43969e90
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	partition datadestinace = m
 		mode: import
 		source =

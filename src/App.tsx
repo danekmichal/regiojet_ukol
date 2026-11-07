@@ -35,6 +35,7 @@ interface SourceRecord {
 interface DestinationRecord {
   city: string;
   mapLocation: string;
+  continent: string;
   country: string;
   lat: number;
   lon: number;
@@ -79,11 +80,12 @@ const SOURCE_DATA: SourceRecord[] = [
   { source: 'dovolena.cz (referral)', medium: 'referral', orders: 2, tickets: 4, adsCost: 0, adsClicks: 0 },
 ];
 
-// Aktivní letiště s geokódováním přímo na čistý název města (dataCategory: City, bez čárky a státu)
+// Aktivní letiště s geokódováním přímo na čistý název města (dataCategory: City, bez čárky a státu) + Kontinent destinace
 const ACTIVE_DESTINATIONS: DestinationRecord[] = [
   {
     city: 'Letiště Václava Havla',
     mapLocation: 'Praha',
+    continent: 'Evropa',
     country: 'Praha, ČR',
     lat: 50.0755,
     lon: 14.4378,
@@ -97,6 +99,7 @@ const ACTIVE_DESTINATIONS: DestinationRecord[] = [
   {
     city: 'Brno Tuřany',
     mapLocation: 'Brno',
+    continent: 'Evropa',
     country: 'Brno, ČR',
     lat: 49.1513,
     lon: 16.6944,
@@ -110,6 +113,7 @@ const ACTIVE_DESTINATIONS: DestinationRecord[] = [
   {
     city: 'Vienna Intl.',
     mapLocation: 'Vienna',
+    continent: 'Evropa',
     country: 'Vídeň, Rakousko',
     lat: 48.2082,
     lon: 16.3738,
@@ -122,7 +126,8 @@ const ACTIVE_DESTINATIONS: DestinationRecord[] = [
   },
   {
     city: 'Istanbul Airport',
-    mapLocation: 'Istanbul, Turkey',
+    mapLocation: 'Istanbul',
+    continent: 'Evropa',
     country: 'Istanbul, Turecko',
     lat: 41.0082,
     lon: 28.9784,
@@ -135,7 +140,8 @@ const ACTIVE_DESTINATIONS: DestinationRecord[] = [
   },
   {
     city: 'Schiphol',
-    mapLocation: 'Amsterdam, Netherlands',
+    mapLocation: 'Amsterdam',
+    continent: 'Evropa',
     country: 'Amsterdam, Nizozemsko',
     lat: 52.3676,
     lon: 4.9041,
@@ -148,7 +154,8 @@ const ACTIVE_DESTINATIONS: DestinationRecord[] = [
   },
   {
     city: 'Charles De Gaulle',
-    mapLocation: 'Paris, France',
+    mapLocation: 'Paris',
+    continent: 'Evropa',
     country: 'Paříž, Francie',
     lat: 48.8566,
     lon: 2.3522,
@@ -161,7 +168,8 @@ const ACTIVE_DESTINATIONS: DestinationRecord[] = [
   },
   {
     city: 'Frankfurt Airport',
-    mapLocation: 'Frankfurt, Germany',
+    mapLocation: 'Frankfurt',
+    continent: 'Evropa',
     country: 'Frankfurt, Německo',
     lat: 50.1109,
     lon: 8.6821,
@@ -174,7 +182,8 @@ const ACTIVE_DESTINATIONS: DestinationRecord[] = [
   },
   {
     city: 'Pablo Ruiz Picasso',
-    mapLocation: 'Malaga, Spain',
+    mapLocation: 'Malaga',
+    continent: 'Evropa',
     country: 'Málaga, Španělsko',
     lat: 36.7213,
     lon: -4.4214,
@@ -352,6 +361,7 @@ export default function App() {
   const [selectedSource, setSelectedSource] = useState<string>('ALL');
   const [selectedMedium, setSelectedMedium] = useState<string>('ALL');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
+  const [selectedContinent, setSelectedContinent] = useState<string>('ALL');
   const [selectedAirport, setSelectedAirport] = useState<string>('ALL');
   const [copied, setCopied] = useState(false);
 
@@ -477,7 +487,9 @@ export default function App() {
 
   const filteredDestinations = useMemo(() => {
     return ACTIVE_DESTINATIONS.filter(
-      (d) => selectedAirport === 'ALL' || d.city === selectedAirport
+      (d) =>
+        (selectedAirport === 'ALL' || d.city === selectedAirport) &&
+        (selectedContinent === 'ALL' || d.continent === selectedContinent)
     ).map((d) => {
       const monthScale =
         selectedMonth === 'ALL'
@@ -498,7 +510,7 @@ export default function App() {
         total: Math.max(1, total),
       };
     });
-  }, [selectedAirport, selectedMonth]);
+  }, [selectedAirport, selectedContinent, selectedMonth]);
 
   const filteredRoutes = useMemo(() => {
     return FLIGHT_ROUTES.filter(
@@ -518,6 +530,7 @@ export default function App() {
     setSelectedSource('ALL');
     setSelectedMedium('ALL');
     setSelectedStatus('ALL');
+    setSelectedContinent('ALL');
     setSelectedAirport('ALL');
   };
 
@@ -666,26 +679,7 @@ export default function App() {
                     </select>
                   </div>
 
-                  <div className="flex flex-col min-w-[160px]">
-                    <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
-                      Stav objednávky
-                    </label>
-                    <select
-                      value={selectedStatus}
-                      onChange={(e) => setSelectedStatus(e.target.value)}
-                      className="bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-700"
-                    >
-                      <option value="ALL">All</option>
-                      <option value="rezervováno">rezervováno</option>
-                      <option value="zrušeno">zrušeno</option>
-                      <option value="storno">storno</option>
-                      <option value="void">void</option>
-                    </select>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex flex-col min-w-[165px]">
+                  <div className="flex flex-col min-w-[145px]">
                     <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
                       Stav objednávky
                     </label>
@@ -702,7 +696,64 @@ export default function App() {
                     </select>
                   </div>
 
-                  <div className="flex flex-col min-w-[190px]">
+                  <div className="flex flex-col min-w-[155px]">
+                    <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
+                      Kontinent destinací
+                    </label>
+                    <select
+                      value={selectedContinent}
+                      onChange={(e) => setSelectedContinent(e.target.value)}
+                      className="bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-700"
+                    >
+                      <option value="ALL">All</option>
+                      <option value="Evropa">Evropa</option>
+                      <option value="Asie & Blízký východ">Asie & Blízký východ</option>
+                      <option value="Severní & Střední Amerika">Severní & Střední Amerika</option>
+                      <option value="Jižní Amerika">Jižní Amerika</option>
+                      <option value="Afrika">Afrika</option>
+                      <option value="Austrálie & Oceánie">Austrálie & Oceánie</option>
+                    </select>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex flex-col min-w-[150px]">
+                    <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
+                      Stav objednávky
+                    </label>
+                    <select
+                      value={selectedStatus}
+                      onChange={(e) => setSelectedStatus(e.target.value)}
+                      className="bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-700"
+                    >
+                      <option value="ALL">All</option>
+                      <option value="rezervováno">rezervováno</option>
+                      <option value="zrušeno">zrušeno</option>
+                      <option value="storno">storno</option>
+                      <option value="void">void</option>
+                    </select>
+                  </div>
+
+                  <div className="flex flex-col min-w-[160px]">
+                    <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
+                      Kontinent destinací
+                    </label>
+                    <select
+                      value={selectedContinent}
+                      onChange={(e) => setSelectedContinent(e.target.value)}
+                      className="bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-700"
+                    >
+                      <option value="ALL">All</option>
+                      <option value="Evropa">Evropa</option>
+                      <option value="Asie & Blízký východ">Asie & Blízký východ</option>
+                      <option value="Severní & Střední Amerika">Severní & Střední Amerika</option>
+                      <option value="Jižní Amerika">Jižní Amerika</option>
+                      <option value="Afrika">Afrika</option>
+                      <option value="Austrálie & Oceánie">Austrálie & Oceánie</option>
+                    </select>
+                  </div>
+
+                  <div className="flex flex-col min-w-[175px]">
                     <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
                       Letiště
                     </label>
@@ -720,7 +771,7 @@ export default function App() {
                     </select>
                   </div>
 
-                  <div className="flex flex-col min-w-[155px]">
+                  <div className="flex flex-col min-w-[140px]">
                     <label className="text-[11px] font-semibold text-[#1E1E1E] mb-0.5">
                       Měsíc / Rok
                     </label>
@@ -1203,7 +1254,7 @@ export default function App() {
             <section className="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80">
               <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
                 <h2 className="text-sm font-bold text-[#1E1E1E]">
-                  Sezónnost a vývoj popularity TOP 5 destinací v čase dle měsíců
+                  Závislost popularity TOP 5 destinací (měst) podle měsíců
                 </h2>
                 <div className="flex flex-wrap items-center gap-4 text-xs">
                   {top5Destinations.map((d, i) => {
@@ -1214,7 +1265,7 @@ export default function App() {
                           className="w-2.5 h-2.5 rounded-full"
                           style={{ backgroundColor: colors[i] }}
                         />
-                        {d.city}
+                        {d.mapLocation} ({d.city})
                       </span>
                     );
                   })}
@@ -1322,7 +1373,7 @@ export default function App() {
                       <div
                         key={dest.city}
                         style={{ left: `${xPct}%`, top: `${yPct}%` }}
-                        title={`Město: ${dest.mapLocation} | Letiště: ${dest.city} | Nejčastější trasa: ${dest.topRoute}`}
+                        title={`Město: ${dest.mapLocation} | Kontinent: ${dest.continent} | Letiště: ${dest.city} | Nejčastější trasa: ${dest.topRoute}`}
                         className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
                       >
                         <div
@@ -1383,31 +1434,35 @@ export default function App() {
                 </div>
               </div>
 
-              {/* 3. Matice destinací vs. stavy objednávky + Analytická poznámka */}
+              {/* 3. Závislost popularity destinací (měst) podle měsíců + Analytická poznámka */}
               <div className="lg:col-span-4 flex flex-col gap-4">
                 <div className="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80 flex-1">
                   <h3 className="text-sm font-bold text-[#1E1E1E] mb-3">
-                    Matice destinací vs. stavy objednávky (Vystaveno, Stornováno atd.)
+                    Závislost popularity destinací (měst) podle měsíců
                   </h3>
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs border-collapse">
                       <thead>
                         <tr className="border-b-2 border-[#FDB913] bg-slate-50 text-left">
-                          <th className="py-2 px-2 font-bold">nazev</th>
-                          <th className="py-2 px-2 font-bold text-right">rezervováno</th>
-                          <th className="py-2 px-2 font-bold text-right">zrušeno</th>
-                          <th className="py-2 px-2 font-bold text-right">převystavena</th>
-                          <th className="py-2 px-2 font-bold text-right">Total</th>
+                          <th className="py-2 px-1.5 font-bold">Město destinace</th>
+                          <th className="py-2 px-1.5 font-bold text-right">2023-08</th>
+                          <th className="py-2 px-1.5 font-bold text-right">2023-09</th>
+                          <th className="py-2 px-1.5 font-bold text-right">2023-10</th>
+                          <th className="py-2 px-1.5 font-bold text-right">2023-11</th>
+                          <th className="py-2 px-1.5 font-bold text-right">2023-12</th>
+                          <th className="py-2 px-1.5 font-bold text-right">Total</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
                         {filteredDestinations.map((d) => (
                           <tr key={d.city} className="hover:bg-amber-50/40">
-                            <td className="py-2 px-2 font-semibold">{d.city}</td>
-                            <td className="py-2 px-2 text-right">{d.vystaveno}</td>
-                            <td className="py-2 px-2 text-right text-[#EF4444]">{d.stornovano}</td>
-                            <td className="py-2 px-2 text-right">{d.zmeneno}</td>
-                            <td className="py-2 px-2 text-right font-bold">{d.total}</td>
+                            <td className="py-2 px-1.5 font-semibold">{d.mapLocation}</td>
+                            <td className="py-2 px-1.5 text-right">{d.monthly['2023-08']}</td>
+                            <td className="py-2 px-1.5 text-right">{d.monthly['2023-09']}</td>
+                            <td className="py-2 px-1.5 text-right">{d.monthly['2023-10']}</td>
+                            <td className="py-2 px-1.5 text-right">{d.monthly['2023-11']}</td>
+                            <td className="py-2 px-1.5 text-right">{d.monthly['2023-12']}</td>
+                            <td className="py-2 px-1.5 text-right font-bold">{d.total}</td>
                           </tr>
                         ))}
                       </tbody>

@@ -57,16 +57,14 @@ table _Measures
 		lineageTag: m0000003-0000-4000-8000-000000000003
 
 	measure 'Pocet Letenek (Top 5)' =
-			VAR _Top5Letiste =
+			VAR _Top5Mesta =
 			    TOPN(
 			        5,
 			        FILTER(
-			            ALLSELECTED(datadestinace[nazev]),
-			            NOT ISBLANK(datadestinace[nazev])
-			                && datadestinace[nazev] <> "0"
-			                && NOT CONTAINSSTRING(datadestinace[nazev], "&#")
+			            ALLSELECTED(datadestinace[Město destinace]),
+			            NOT ISBLANK(datadestinace[Město destinace])
 			        ),
-			        [Pocet Letenek],
+			        CALCULATE([Pocet Letenek], ALLSELECTED('Dim_Date')),
 			        DESC
 			    )
 			RETURN
@@ -75,7 +73,7 @@ table _Measures
 			        BLANK(),
 			        CALCULATE(
 			            [Pocet Letenek],
-			            KEEPFILTERS(_Top5Letiste)
+			            KEEPFILTERS(_Top5Mesta)
 			        )
 			    )
 		formatString: #,0
