@@ -77,7 +77,7 @@ table _Measures
 		lineageTag: m0000007-0000-4000-8000-000000000007
 
 	measure 'CR %' = DIVIDE([Pocet Objednavek (CRM)], [Kliky Ads], BLANK())
-		formatString: 0.00 %
+		formatString: 0.000 %
 		displayFolder: 02. Marketing & Ads
 		lineageTag: m0000008-0000-4000-8000-000000000008
 
@@ -119,6 +119,90 @@ table _Measures
 		displayFolder: 03. Time Intelligence (MoM)
 		lineageTag: m0000012-0000-4000-8000-000000000012
 
+	measure 'MoM Letenky Indikator' =
+			VAR _Current = [Pocet Letenek]
+			VAR _Prev = CALCULATE([Pocet Letenek], DATEADD('Dim_Date'[Date], -1, MONTH))
+			VAR _DeltaAbs = IF(NOT ISBLANK(_Current) && NOT ISBLANK(_Prev), _Current - _Prev, BLANK())
+			VAR _DeltaPct = DIVIDE(_DeltaAbs, _Prev, BLANK())
+			RETURN
+			    IF(
+			        ISBLANK(_Current),
+			        BLANK(),
+			        SWITCH(
+			            TRUE(),
+			            ISBLANK(_DeltaPct), BLANK(),
+			            _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (+" & FORMAT(_DeltaAbs, "#,0") & ")",
+			            _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (" & FORMAT(_DeltaAbs, "#,0") & ")",
+			            "▬ 0.0 % (0)"
+			        )
+			    )
+		displayFolder: 03. Time Intelligence (MoM)
+		lineageTag: m0000021-0000-4000-8000-000000000021
+
+	measure 'MoM Kampane Indikator' =
+			VAR _Current = [Pocet Kampani]
+			VAR _Prev =
+			     COALESCE(
+			        CALCULATE([Pocet Kampani], DATEADD('Dim_Date'[Date], -1, MONTH)),
+			        CALCULATE([Pocet Kampani], PREVIOUSMONTH('Dim_Date'[Date]))
+			    )
+			VAR _DeltaAbs = IF(NOT ISBLANK(_Current) && NOT ISBLANK(_Prev) && _Prev > 0, _Current - _Prev, BLANK())
+			VAR _DeltaPct = DIVIDE(_DeltaAbs, _Prev, BLANK())
+			RETURN
+			    IF(
+			        ISBLANK(_Current),
+			        BLANK(),
+			        SWITCH(
+			            TRUE(),
+			            ISBLANK(_DeltaPct), "▬ aktivní kampaně",
+			            _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (+" & FORMAT(_DeltaAbs, "#,0") & ")",
+			            _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (" & FORMAT(_DeltaAbs, "#,0") & ")",
+			            "▬ 0.0 % (0)"
+			        )
+			    )
+		displayFolder: 03. Time Intelligence (MoM)
+		lineageTag: m0000022-0000-4000-8000-000000000022
+
+	measure 'MoM CPA Indikator' =
+			VAR _Current = [CPA]
+			VAR _Prev = CALCULATE([CPA], DATEADD('Dim_Date'[Date], -1, MONTH))
+			VAR _DeltaAbs = IF(NOT ISBLANK(_Current) && NOT ISBLANK(_Prev), _Current - _Prev, BLANK())
+			VAR _DeltaPct = DIVIDE(_DeltaAbs, _Prev, BLANK())
+			RETURN
+			    IF(
+			        ISBLANK(_Current),
+			        BLANK(),
+			        SWITCH(
+			            TRUE(),
+			            ISBLANK(_DeltaPct), BLANK(),
+			            _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (vs PM)",
+			            _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (vs PM)",
+			            "▬ 0.0 % (vs PM)"
+			        )
+			    )
+		displayFolder: 03. Time Intelligence (MoM)
+		lineageTag: m0000023-0000-4000-8000-000000000023
+
+	measure 'MoM CR Indikator' =
+			VAR _Current = [CR %]
+			VAR _Prev = CALCULATE([CR %], DATEADD('Dim_Date'[Date], -1, MONTH))
+			VAR _DeltaAbs = IF(NOT ISBLANK(_Current) && NOT ISBLANK(_Prev), _Current - _Prev, BLANK())
+			VAR _DeltaPct = DIVIDE(_DeltaAbs, _Prev, BLANK())
+			RETURN
+			    IF(
+			        ISBLANK(_Current),
+			        BLANK(),
+			        SWITCH(
+			            TRUE(),
+			            ISBLANK(_DeltaPct), BLANK(),
+			            _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (vs PM)",
+			            _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (vs PM)",
+			            "▬ 0.0 % (vs PM)"
+			        )
+			    )
+		displayFolder: 03. Time Intelligence (MoM)
+		lineageTag: m0000024-0000-4000-8000-000000000024
+
 	measure 'MoM Barva' =
 			VAR _DeltaPct = [Objednavky MoM %]
 			RETURN
@@ -140,18 +224,29 @@ table _Measures
 			        [Pocet Objednavek (CRM)],
 			        DESC
 			    )
-			RETURN
-			    MAXX(_Top, dataGA[sessionSource])
-		displayFolder: 04. Insight Karty
-		lineageTag: m0000015-0000-4000-8000-000000000015
-
-	measure 'Top Zdroj Popis' =
-			VAR _Name = [Top Zdroj Nazev]
+			VAR _Name = MAXX(_Top, dataGA[sessionSource])
 			VAR _Total = [Pocet Objednavek (CRM)]
 			VAR _TopVal = CALCULATE([Pocet Objednavek (CRM)], dataGA[sessionSource] = _Name)
 			VAR _Share = DIVIDE(_TopVal, _Total, 0)
 			RETURN
-			    FORMAT(_TopVal, "#,0") & " objednávek (" & FORMAT(_Share, "0.0 %") & " ze všech rezervací)"
+			    _Name & " — " & FORMAT(_TopVal, "#,0") & " obj. (" & FORMAT(_Share, "0.0 %") & ")"
+		displayFolder: 04. Insight Karty
+		lineageTag: m0000015-0000-4000-8000-000000000015
+
+	measure 'Top Zdroj Popis' =
+			VAR _Top =
+			    TOPN(
+			        1,
+			        FILTER(ALLSELECTED(dataGA[sessionSource]), NOT ISBLANK(dataGA[sessionSource]) && dataGA[sessionSource] <> "(not set)"),
+			        [Pocet Objednavek (CRM)],
+			        DESC
+			    )
+			VAR _Name = MAXX(_Top, dataGA[sessionSource])
+			VAR _Total = [Pocet Objednavek (CRM)]
+			VAR _TopVal = CALCULATE([Pocet Objednavek (CRM)], dataGA[sessionSource] = _Name)
+			VAR _Share = DIVIDE(_TopVal, _Total, 0)
+			RETURN
+			    FORMAT(_TopVal, "#,0") & " objednávek (" & FORMAT(_Share, "0.0 %") & ")"
 		displayFolder: 04. Insight Karty
 		lineageTag: m0000016-0000-4000-8000-000000000016
 
@@ -163,18 +258,29 @@ table _Measures
 			        [Pocet Objednavek (CRM)],
 			        DESC
 			    )
-			RETURN
-			    COALESCE(MAXX(_Top, dataGA[sessionCampaignName]), "Brand / Performance")
-		displayFolder: 04. Insight Karty
-		lineageTag: m0000017-0000-4000-8000-000000000017
-
-	measure 'Top Kampan Popis' =
-			VAR _Name = [Top Kampan Nazev]
+			VAR _Name = COALESCE(MAXX(_Top, dataGA[sessionCampaignName]), "(organic)")
 			VAR _Total = [Pocet Objednavek (CRM)]
 			VAR _TopVal = CALCULATE([Pocet Objednavek (CRM)], dataGA[sessionCampaignName] = _Name)
 			VAR _Share = DIVIDE(_TopVal, _Total, 0)
 			RETURN
-			    FORMAT(_TopVal, "#,0") & " objednávek (" & FORMAT(_Share, "0.0 %") & " podíl kampaně)"
+			    _Name & " — " & FORMAT(_TopVal, "#,0") & " obj. (" & FORMAT(_Share, "0.0 %") & ")"
+		displayFolder: 04. Insight Karty
+		lineageTag: m0000017-0000-4000-8000-000000000017
+
+	measure 'Top Kampan Popis' =
+			VAR _Top =
+			    TOPN(
+			        1,
+			        FILTER(ALLSELECTED(dataGA[sessionCampaignName]), NOT ISBLANK(dataGA[sessionCampaignName]) && dataGA[sessionCampaignName] <> "(not set)"),
+			        [Pocet Objednavek (CRM)],
+			        DESC
+			    )
+			VAR _Name = COALESCE(MAXX(_Top, dataGA[sessionCampaignName]), "(organic)")
+			VAR _Total = [Pocet Objednavek (CRM)]
+			VAR _TopVal = CALCULATE([Pocet Objednavek (CRM)], dataGA[sessionCampaignName] = _Name)
+			VAR _Share = DIVIDE(_TopVal, _Total, 0)
+			RETURN
+			    FORMAT(_TopVal, "#,0") & " objednávek (" & FORMAT(_Share, "0.0 %") & ")"
 		displayFolder: 04. Insight Karty
 		lineageTag: m0000018-0000-4000-8000-000000000018
 
@@ -186,20 +292,47 @@ table _Measures
 			        [Pocet Letenek],
 			        DESC
 			    )
-			RETURN
-			    MAXX(_Top, datadestinace[nazev])
-		displayFolder: 04. Insight Karty
-		lineageTag: m0000019-0000-4000-8000-000000000019
-
-	measure 'Top Destinace Popis' =
-			VAR _Name = [Top Destinace Nazev]
+			VAR _Name = MAXX(_Top, datadestinace[nazev])
 			VAR _Total = [Pocet Letenek]
 			VAR _TopVal = CALCULATE([Pocet Letenek], datadestinace[nazev] = _Name)
 			VAR _Share = DIVIDE(_TopVal, _Total, 0)
 			RETURN
-			    FORMAT(_TopVal, "#,0") & " prodaných letenek (" & FORMAT(_Share, "0.0 %") & " z celku)"
+			    _Name & " — " & FORMAT(_TopVal, "#,0") & " let. (" & FORMAT(_Share, "0.0 %") & ")"
+		displayFolder: 04. Insight Karty
+		lineageTag: m0000019-0000-4000-8000-000000000019
+
+	measure 'Top Destinace Popis' =
+			VAR _Top =
+			    TOPN(
+			        1,
+			        FILTER(ALLSELECTED(datadestinace[nazev]), NOT ISBLANK(datadestinace[nazev]) && datadestinace[nazev] <> "0"),
+			        [Pocet Letenek],
+			        DESC
+			    )
+			VAR _Name = MAXX(_Top, datadestinace[nazev])
+			VAR _Total = [Pocet Letenek]
+			VAR _TopVal = CALCULATE([Pocet Letenek], datadestinace[nazev] = _Name)
+			VAR _Share = DIVIDE(_TopVal, _Total, 0)
+			RETURN
+			    FORMAT(_TopVal, "#,0") & " letenek (" & FORMAT(_Share, "0.0 %") & ")"
 		displayFolder: 04. Insight Karty
 		lineageTag: m0000020-0000-4000-8000-000000000020
+
+	measure 'Nejcastejsi Trasa Letiste' =
+			VAR _TopRoute =
+			    TOPN(
+			        1,
+			        FILTER(
+			            ALLSELECTED(dataItiner[Letecká trasa (Odkud ➔ Kam)]),
+			            NOT ISBLANK(dataItiner[Letecká trasa (Odkud ➔ Kam)])
+			        ),
+			        [Pocet Letenek],
+			        DESC
+			    )
+			RETURN
+			    MAXX(_TopRoute, dataItiner[Letecká trasa (Odkud ➔ Kam)])
+		displayFolder: 04. Insight Karty
+		lineageTag: m0000025-0000-4000-8000-000000000025
 
 	column Value
 		dataType: int64

@@ -27,11 +27,40 @@
                 }
               },
               "queryRef": "_Measures.Pocet Kampani",
-              "nativeQueryRef": "Běžící kampaně v období"
+              "nativeQueryRef": "Kampaně"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "MoM Kampane Indikator"
+                }
+              },
+              "queryRef": "_Measures.MoM Kampane Indikator",
+              "nativeQueryRef": "MoM"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [

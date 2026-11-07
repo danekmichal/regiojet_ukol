@@ -19,6 +19,94 @@ table datadestinace
 
 		annotation SummarizationSetBy = Automatic
 
+	column 'Mapa Lokace' =
+			VAR _N = TRIM ( datadestinace[nazev] )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( _N ) || _N = "0", BLANK (),
+			        CONTAINSSTRING ( _N, "Václava Havla" ) || CONTAINSSTRING ( _N, "Ruzyně" ), "Prague, Czechia",
+			        CONTAINSSTRING ( _N, "Tuřany" ), "Brno, Czechia",
+			        CONTAINSSTRING ( _N, "Mošnov" ) || CONTAINSSTRING ( _N, "Janáčka" ), "Ostrava, Czechia",
+			        CONTAINSSTRING ( _N, "Pardubice" ), "Pardubice, Czechia",
+			        CONTAINSSTRING ( _N, "Karlovy Vary" ), "Karlovy Vary, Czechia",
+			        CONTAINSSTRING ( _N, "Ivanka" ) || CONTAINSSTRING ( _N, "Štefánik" ), "Bratislava, Slovakia",
+			        CONTAINSSTRING ( _N, "Košice" ), "Kosice, Slovakia",
+			        CONTAINSSTRING ( _N, "Vienna" ) || CONTAINSSTRING ( _N, "Schwechat" ), "Vienna, Austria",
+			        CONTAINSSTRING ( _N, "Barajas" ), "Madrid, Spain",
+			        CONTAINSSTRING ( _N, "El Prat" ), "Barcelona, Spain",
+			        CONTAINSSTRING ( _N, "Palma de Mallorca" ) || CONTAINSSTRING ( _N, "Son Sant Joan" ), "Palma de Mallorca, Spain",
+			        CONTAINSSTRING ( _N, "Málaga" ) || CONTAINSSTRING ( _N, "Costa del Sol" ), "Malaga, Spain",
+			        CONTAINSSTRING ( _N, "Alicante" ), "Alicante, Spain",
+			        CONTAINSSTRING ( _N, "Tenerife" ), "Tenerife, Spain",
+			        CONTAINSSTRING ( _N, "Fiumicino" ) || CONTAINSSTRING ( _N, "Ciampino" ), "Rome, Italy",
+			        CONTAINSSTRING ( _N, "Malpensa" ) || CONTAINSSTRING ( _N, "Linate" ) || CONTAINSSTRING ( _N, "Bergamo" ) || CONTAINSSTRING ( _N, "Orio al Serio" ), "Milan, Italy",
+			        CONTAINSSTRING ( _N, "Marco Polo" ) || CONTAINSSTRING ( _N, "Treviso" ), "Venice, Italy",
+			        CONTAINSSTRING ( _N, "Capodichino" ), "Naples, Italy",
+			        CONTAINSSTRING ( _N, "Fontanarossa" ) || CONTAINSSTRING ( _N, "Catania" ), "Catania, Italy",
+			        CONTAINSSTRING ( _N, "Palese" ) || CONTAINSSTRING ( _N, "Bari" ), "Bari, Italy",
+			        CONTAINSSTRING ( _N, "Abruzzo" ), "Pescara, Italy",
+			        CONTAINSSTRING ( _N, "Charles de Gaulle" ) || CONTAINSSTRING ( _N, "Orly" ) || CONTAINSSTRING ( _N, "Beauvais" ), "Paris, France",
+			        CONTAINSSTRING ( _N, "Côte d'Azur" ) || CONTAINSSTRING ( _N, "Nice" ), "Nice, France",
+			        CONTAINSSTRING ( _N, "Saint-Exupéry" ) || CONTAINSSTRING ( _N, "Lyon" ), "Lyon, France",
+			        CONTAINSSTRING ( _N, "Heathrow" ) || CONTAINSSTRING ( _N, "Gatwick" ) || CONTAINSSTRING ( _N, "Stansted" ) || CONTAINSSTRING ( _N, "Luton" ), "London, United Kingdom",
+			        CONTAINSSTRING ( _N, "Ringway" ) || CONTAINSSTRING ( _N, "Manchester" ), "Manchester, United Kingdom",
+			        CONTAINSSTRING ( _N, "Turnhouse" ) || CONTAINSSTRING ( _N, "Edinburgh" ), "Edinburgh, United Kingdom",
+			        CONTAINSSTRING ( _N, "Schiphol" ), "Amsterdam, Netherlands",
+			        CONTAINSSTRING ( _N, "Eindhoven" ), "Eindhoven, Netherlands",
+			        CONTAINSSTRING ( _N, "Zaventem" ) || CONTAINSSTRING ( _N, "Charleroi" ), "Brussels, Belgium",
+			        CONTAINSSTRING ( _N, "Arlanda" ) || CONTAINSSTRING ( _N, "Skavsta" ) || CONTAINSSTRING ( _N, "Bromma" ), "Stockholm, Sweden",
+			        CONTAINSSTRING ( _N, "Landvetter" ), "Gothenburg, Sweden",
+			        CONTAINSSTRING ( _N, "Gardermoen" ) || CONTAINSSTRING ( _N, "Torp" ), "Oslo, Norway",
+			        CONTAINSSTRING ( _N, "Kastrup" ), "Copenhagen, Denmark",
+			        CONTAINSSTRING ( _N, "Vantaa" ), "Helsinki, Finland",
+			        CONTAINSSTRING ( _N, "Keflavík" ), "Reykjavik, Iceland",
+			        CONTAINSSTRING ( _N, "Brandenburg" ) || CONTAINSSTRING ( _N, "Tegel" ) || CONTAINSSTRING ( _N, "Schönefeld" ), "Berlin, Germany",
+			        CONTAINSSTRING ( _N, "Franz Josef Strauss" ), "Munich, Germany",
+			        CONTAINSSTRING ( _N, "Rhein-Main" ) || CONTAINSSTRING ( _N, "Frankfurt" ), "Frankfurt, Germany",
+			        CONTAINSSTRING ( _N, "Kloten" ), "Zurich, Switzerland",
+			        CONTAINSSTRING ( _N, "Cointrin" ), "Geneva, Switzerland",
+			        CONTAINSSTRING ( _N, "Okęcie" ) || CONTAINSSTRING ( _N, "Chopin" ) || CONTAINSSTRING ( _N, "Modlin" ), "Warsaw, Poland",
+			        CONTAINSSTRING ( _N, "Balice" ), "Krakow, Poland",
+			        CONTAINSSTRING ( _N, "Ferenc Liszt" ) || CONTAINSSTRING ( _N, "Ferihegy" ), "Budapest, Hungary",
+			        CONTAINSSTRING ( _N, "Otopeni" ) || CONTAINSSTRING ( _N, "Coand" ), "Bucharest, Romania",
+			        CONTAINSSTRING ( _N, "Vrazhdebna" ) || CONTAINSSTRING ( _N, "Sofia" ), "Sofia, Bulgaria",
+			        CONTAINSSTRING ( _N, "Venizelos" ), "Athens, Greece",
+			        CONTAINSSTRING ( _N, "Makedonia" ), "Thessaloniki, Greece",
+			        CONTAINSSTRING ( _N, "Kazantzakis" ) || CONTAINSSTRING ( _N, "Heraklion" ), "Heraklion, Greece",
+			        CONTAINSSTRING ( _N, "Diagoras" ), "Rhodes, Greece",
+			        CONTAINSSTRING ( _N, "Portela" ) || CONTAINSSTRING ( _N, "Delgado" ) || CONTAINSSTRING ( _N, "Lisabon" ), "Lisbon, Portugal",
+			        CONTAINSSTRING ( _N, "Carneiro" ), "Porto, Portugal",
+			        CONTAINSSTRING ( _N, "Luqa" ), "Valletta, Malta",
+			        CONTAINSSTRING ( _N, "Larnaca" ), "Larnaca, Cyprus",
+			        CONTAINSSTRING ( _N, "Paphos" ), "Paphos, Cyprus",
+			        CONTAINSSTRING ( _N, "Atatürk" ) || CONTAINSSTRING ( _N, "Sabiha" ) || CONTAINSSTRING ( _N, "Istanbul" ), "Istanbul, Turkey",
+			        CONTAINSSTRING ( _N, "Antalya" ), "Antalya, Turkey",
+			        CONTAINSSTRING ( _N, "Ben Gurion" ), "Tel Aviv, Israel",
+			        CONTAINSSTRING ( _N, "Dubai" ), "Dubai, United Arab Emirates",
+			        CONTAINSSTRING ( _N, "Abu Dhabi" ), "Abu Dhabi, United Arab Emirates",
+			        CONTAINSSTRING ( _N, "Hamad" ) || CONTAINSSTRING ( _N, "Doha" ), "Doha, Qatar",
+			        CONTAINSSTRING ( _N, "Hurghada" ), "Hurghada, Egypt",
+			        CONTAINSSTRING ( _N, "Marsa Alam" ), "Marsa Alam, Egypt",
+			        CONTAINSSTRING ( _N, "Cairo" ), "Cairo, Egypt",
+			        CONTAINSSTRING ( _N, "Suvarnabhumi" ) || CONTAINSSTRING ( _N, "Don Mueang" ), "Bangkok, Thailand",
+			        CONTAINSSTRING ( _N, "Phuket" ), "Phuket, Thailand",
+			        CONTAINSSTRING ( _N, "Changi" ), "Singapore",
+			        CONTAINSSTRING ( _N, "Narita" ) || CONTAINSSTRING ( _N, "Haneda" ), "Tokyo, Japan",
+			        CONTAINSSTRING ( _N, "Incheon" ), "Seoul, South Korea",
+			        CONTAINSSTRING ( _N, "Kennedy" ) || CONTAINSSTRING ( _N, "Newark" ) || CONTAINSSTRING ( _N, "LaGuardia" ), "New York, USA",
+			        CONTAINSSTRING ( _N, "O'Hare" ), "Chicago, USA",
+			        CONTAINSSTRING ( _N, "Sheremetyevo" ) || CONTAINSSTRING ( _N, "Domodedovo" ) || CONTAINSSTRING ( _N, "Vnukovo" ), "Moscow, Russia",
+			        CONTAINSSTRING ( _N, "Boryspil" ) || CONTAINSSTRING ( _N, "Zhuliany" ), "Kyiv, Ukraine",
+			        _N & " Airport"
+			    )
+		dataType: string
+		dataCategory: Place
+		lineageTag: 8944f95b-24c1-48f1-9c0d-615f21747c7e
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	partition datadestinace = m
 		mode: import
 		source =

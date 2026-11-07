@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "a1000000000000000013",
   "position": {
-    "x": 1436,
+    "x": 1536,
     "y": 260,
     "z": 15,
-    "height": 252,
-    "width": 460,
+    "height": 112,
+    "width": 360,
     "tabOrder": 15
   },
   "visual": {
@@ -28,24 +28,25 @@
               },
               "queryRef": "_Measures.Top Zdroj Nazev",
               "nativeQueryRef": "Zdroj s nejvyšším počtem rezervací"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Top Zdroj Popis"
-                }
-              },
-              "queryRef": "_Measures.Top Zdroj Popis",
-              "nativeQueryRef": "Výkon zdroje"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [

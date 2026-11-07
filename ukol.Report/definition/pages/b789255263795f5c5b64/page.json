@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
   "name": "b789255263795f5c5b64",
-  "displayName": "Destinace, geografie & sezónnost",
+  "displayName": "Destinace, trasy & sezónnost",
   "displayOption": "FitToPage",
   "height": 1080,
   "width": 1920,

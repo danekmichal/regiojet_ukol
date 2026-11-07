@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "338eb1d70c9e0208350b",
   "position": {
-    "x": 1180,
+    "x": 44,
     "y": 26,
     "z": 1,
     "height": 64,
-    "width": 696,
-    "tabOrder": 5
+    "width": 560,
+    "tabOrder": 1
   },
   "visual": {
     "visualType": "textbox",
@@ -27,7 +27,7 @@
                     }
                   }
                 ],
-                "horizontalTextAlignment": "right"
+                "horizontalTextAlignment": "left"
               },
               {
                 "textRuns": [
@@ -41,7 +41,7 @@
                     }
                   }
                 ],
-                "horizontalTextAlignment": "right"
+                "horizontalTextAlignment": "left"
               }
             ]
           }

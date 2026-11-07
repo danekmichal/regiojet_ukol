@@ -27,7 +27,7 @@
                 }
               },
               "queryRef": "_Measures.Pocet Objednavek (CRM)",
-              "nativeQueryRef": "Celkem"
+              "nativeQueryRef": "Objednávky"
             },
             {
               "field": {
@@ -41,11 +41,26 @@
                 }
               },
               "queryRef": "_Measures.MoM Trend Indikator",
-              "nativeQueryRef": "vs PM"
+              "nativeQueryRef": "MoM"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [

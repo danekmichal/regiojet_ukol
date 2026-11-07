@@ -28,6 +28,43 @@ table dataItiner
 
 		annotation SummarizationSetBy = Automatic
 
+	column 'Odkud (Letiště)' =
+			VAR _FromName = LOOKUPVALUE ( datadestinace[nazev], datadestinace[id_letiste], dataItiner[First id_from] )
+			RETURN
+			    IF ( NOT ISBLANK ( _FromName ) && _FromName <> "0", _FromName, BLANK () )
+		dataType: string
+		dataCategory: Place
+		lineageTag: a1111111-2222-4333-8444-555555555501
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Kam (Letiště)' =
+			VAR _ToName = LOOKUPVALUE ( datadestinace[nazev], datadestinace[id_letiste], dataItiner[Last id_to] )
+			RETURN
+			    IF ( NOT ISBLANK ( _ToName ) && _ToName <> "0", _ToName, BLANK () )
+		dataType: string
+		dataCategory: Place
+		lineageTag: a1111111-2222-4333-8444-555555555502
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Letecká trasa (Odkud ➔ Kam)' =
+			VAR _FromName = LOOKUPVALUE ( datadestinace[nazev], datadestinace[id_letiste], dataItiner[First id_from] )
+			VAR _ToName = LOOKUPVALUE ( datadestinace[nazev], datadestinace[id_letiste], dataItiner[Last id_to] )
+			RETURN
+			    IF (
+			        NOT ISBLANK ( _FromName ) && NOT ISBLANK ( _ToName ) && _FromName <> "0" && _ToName <> "0",
+			        _FromName & " ➔ " & _ToName,
+			        BLANK ()
+			    )
+		dataType: string
+		lineageTag: a1111111-2222-4333-8444-555555555503
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	partition dataItiner = m
 		mode: import
 		source =

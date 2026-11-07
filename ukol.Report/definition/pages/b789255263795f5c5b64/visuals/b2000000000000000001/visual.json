@@ -3,10 +3,10 @@
   "name": "b2000000000000000001",
   "position": {
     "x": 44,
-    "y": 32,
+    "y": 26,
     "z": 1,
     "height": 64,
-    "width": 780,
+    "width": 560,
     "tabOrder": 1
   },
   "visual": {
@@ -19,27 +19,29 @@
               {
                 "textRuns": [
                   {
-                    "value": "DESTINACE, GEOGRAFIE & SEZÓNNOST LETENEK",
-                    "textStyle": {
-                      "fontWeight": "bold",
-                      "fontFamily": "Segoe UI",
-                      "fontSize": "16pt",
-                      "color": "#1E1E1E"
-                    }
-                  }
-                ]
-              },
-              {
-                "textRuns": [
-                  {
-                    "value": "Sezónní dynamika TOP 5 destinací, geografická distribuce letů a matice stavů vystavených / stornovaných letenek",
+                    "value": "RegioJet / Student Agency BI",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "9.5pt",
                       "color": "#64748B"
                     }
                   }
-                ]
+                ],
+                "horizontalTextAlignment": "left"
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Destinace, trasy & sezónnost",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "14pt",
+                      "color": "#1E1E1E"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "left"
               }
             ]
           }

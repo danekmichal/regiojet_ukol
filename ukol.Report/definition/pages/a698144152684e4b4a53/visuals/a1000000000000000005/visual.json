@@ -27,11 +27,40 @@
                 }
               },
               "queryRef": "_Measures.Pocet Letenek",
-              "nativeQueryRef": "Vystavené a aktivní letenky"
+              "nativeQueryRef": "Letenky"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "MoM Letenky Indikator"
+                }
+              },
+              "queryRef": "_Measures.MoM Letenky Indikator",
+              "nativeQueryRef": "MoM"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [

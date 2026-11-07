@@ -27,11 +27,40 @@
                 }
               },
               "queryRef": "_Measures.CR %",
-              "nativeQueryRef": "Objednávky / Prokliky Ads"
+              "nativeQueryRef": "CR"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "MoM CR Indikator"
+                }
+              },
+              "queryRef": "_Measures.MoM CR Indikator",
+              "nativeQueryRef": "MoM"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [

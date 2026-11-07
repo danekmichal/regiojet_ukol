@@ -27,11 +27,40 @@
                 }
               },
               "queryRef": "_Measures.CPA",
-              "nativeQueryRef": "Náklady na 1 objednávku"
+              "nativeQueryRef": "CPA"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "MoM CPA Indikator"
+                }
+              },
+              "queryRef": "_Measures.MoM CPA Indikator",
+              "nativeQueryRef": "MoM"
             }
           ]
         }
       }
+    },
+    "objects": {
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "visualContainerObjects": {
       "title": [
