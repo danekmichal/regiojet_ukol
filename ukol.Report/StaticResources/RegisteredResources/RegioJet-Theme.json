@@ -36,12 +36,12 @@
   "visitedHyperlink": "#1E1E1E",
   "textClasses": {
     "callout": {
-      "fontSize": 24,
+      "fontSize": 22,
       "fontFace": "Segoe UI Semibold",
       "color": "#1E1E1E"
     },
     "title": {
-      "fontSize": 14,
+      "fontSize": 13,
       "fontFace": "Segoe UI Semibold",
       "color": "#1E1E1E"
     },
@@ -54,6 +54,48 @@
       "fontSize": 10.5,
       "fontFace": "Segoe UI",
       "color": "#64748B"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "subTitle": [
+          {
+            "show": false
+          }
+        ]
+      }
+    },
+    "multiRowCard": {
+      "*": {
+        "cardTitle": [
+          {
+            "color": {
+              "solid": {
+                "color": "#1E1E1E"
+              }
+            },
+            "fontSize": 11,
+            "fontFamily": "Segoe UI Semibold"
+          }
+        ],
+        "dataLabels": [
+          {
+            "color": {
+              "solid": {
+                "color": "#475569"
+              }
+            },
+            "fontSize": 11,
+            "fontFamily": "Segoe UI Semibold"
+          }
+        ],
+        "categoryLabels": [
+          {
+            "show": false
+          }
+        ]
+      }
     }
   }
 }

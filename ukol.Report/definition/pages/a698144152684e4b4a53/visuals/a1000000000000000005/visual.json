@@ -27,27 +27,44 @@
                 }
               },
               "queryRef": "_Measures.Pocet Letenek",
-              "nativeQueryRef": "Letenky"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "MoM Letenky Indikator"
-                }
-              },
-              "queryRef": "_Measures.MoM Letenky Indikator",
-              "nativeQueryRef": "MoM"
+              "nativeQueryRef": "Počet letenek"
             }
           ]
         }
       }
     },
     "objects": {
+      "dataLabels": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#1E1E1E'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "18D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
+                }
+              }
+            }
+          }
+        }
+      ],
       "categoryLabels": [
         {
           "properties": {
@@ -77,6 +94,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'Počet letenek'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

@@ -42,10 +42,10 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Pocet Objednavek (CRM)"
+                  "Property": "Pocet Objednavek Zdroje (Top 10)"
                 }
               },
-              "queryRef": "_Measures.Pocet Objednavek (CRM)",
+              "queryRef": "_Measures.Pocet Objednavek Zdroje (Top 10)",
               "nativeQueryRef": "Počet objednávek"
             }
           ]
@@ -107,7 +107,7 @@
                     "Entity": "_Measures"
                   }
                 },
-                "Property": "Pocet Objednavek (CRM)"
+                "Property": "Pocet Objednavek Zdroje (Top 10)"
               }
             },
             "direction": "Descending"
@@ -167,76 +167,21 @@
             }
           }
         }
-      ]
-    },
-    "drillFilterOtherVisuals": true
-  },
-  "filterConfig": {
-    "filters": [
-      {
-        "name": "top10_sources_filter",
-        "field": {
-          "Column": {
-            "Expression": {
-              "SourceRef": {
-                "Entity": "dataGA"
-              }
-            },
-            "Property": "sessionSource"
-          }
-        },
-        "type": "TopN",
-        "filter": {
-          "Version": 2,
-          "From": [
-            {
-              "Name": "d",
-              "Entity": "dataGA",
-              "Type": 0
-            },
-            {
-              "Name": "m",
-              "Entity": "_Measures",
-              "Type": 0
-            }
-          ],
-          "Where": [
-            {
-              "Condition": {
-                "Top": {
-                  "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Source": "d"
-                        }
-                      },
-                      "Property": "sessionSource"
-                    }
-                  },
-                  "Bottom": false,
-                  "Count": 10,
-                  "OrderBy": [
-                    {
-                      "Direction": 2,
-                      "Expression": {
-                        "Measure": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Source": "m"
-                            }
-                          },
-                          "Property": "Pocet Objednavek (CRM)"
-                        }
-                      }
-                    }
-                  ]
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }
-          ]
+          }
         }
-      }
-    ]
+      ]
+    },
+    "drillFilterOtherVisuals": true
   }
 }

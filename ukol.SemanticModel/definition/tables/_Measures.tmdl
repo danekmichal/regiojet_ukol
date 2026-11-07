@@ -20,6 +20,32 @@ table _Measures
 		displayFolder: 01. Objednávky & Letenky
 		lineageTag: m0000002-0000-4000-8000-000000000002
 
+	measure 'Pocet Objednavek Zdroje (Top 10)' =
+			VAR _CurrSource = SELECTEDVALUE(dataGA[sessionSource])
+			VAR _Top10Sources =
+			    TOPN(
+			        10,
+			        FILTER(
+			            ALLSELECTED(dataGA[sessionSource]),
+			            NOT ISBLANK(dataGA[sessionSource])
+			                && dataGA[sessionSource] <> "(not set)"
+			        ),
+			        [Pocet Objednavek (CRM)],
+			        DESC
+			    )
+			RETURN
+			    IF(
+			        ISBLANK(_CurrSource) || _CurrSource = "(not set)",
+			        BLANK(),
+			        CALCULATE(
+			            [Pocet Objednavek (CRM)],
+			            KEEPFILTERS(_Top10Sources)
+			        )
+			    )
+		formatString: #,0
+		displayFolder: 01. Objednávky & Letenky
+		lineageTag: m0000026-0000-4000-8000-000000000026
+
 	measure 'Pocet Letenek' =
 			CALCULATE(
 			    COUNTROWS(dataLet),
@@ -77,17 +103,31 @@ table _Measures
 		lineageTag: m0000007-0000-4000-8000-000000000007
 
 	measure 'CR %' = DIVIDE([Pocet Objednavek (CRM)], [Kliky Ads], BLANK())
-		formatString: 0.000 %
+		formatString: 0.00 %
 		displayFolder: 02. Marketing & Ads
 		lineageTag: m0000008-0000-4000-8000-000000000008
 
-	measure 'Objednavky PM' = CALCULATE([Pocet Objednavek (CRM)], DATEADD('Dim_Date'[Date], -1, MONTH))
+	measure 'Objednavky PM' =
+			IF(
+			    HASONEVALUE('Dim_Date'[RokMesicText]),
+			    CALCULATE([Pocet Objednavek (CRM)], DATEADD('Dim_Date'[Date], -1, MONTH)),
+			    VAR _MaxYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALLSELECTED('Dim_Date'[RokMesicText]), NOT ISBLANK([Pocet Objednavek (CRM)])))
+			    VAR _PrevYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALL('Dim_Date'[RokMesicText]), 'Dim_Date'[RokMesicText] < _MaxYM && NOT ISBLANK([Pocet Objednavek (CRM)])))
+			    RETURN
+			        CALCULATE([Pocet Objednavek (CRM)], 'Dim_Date'[RokMesicText] = _PrevYM)
+			)
 		formatString: #,0
 		displayFolder: 03. Time Intelligence (MoM)
 		lineageTag: m0000009-0000-4000-8000-000000000009
 
 	measure 'Objednavky MoM Abs' =
-			VAR _Current = [Pocet Objednavek (CRM)]
+			VAR _Current =
+			    IF(
+			        HASONEVALUE('Dim_Date'[RokMesicText]),
+			        [Pocet Objednavek (CRM)],
+			        VAR _MaxYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALLSELECTED('Dim_Date'[RokMesicText]), NOT ISBLANK([Pocet Objednavek (CRM)])))
+			        RETURN CALCULATE([Pocet Objednavek (CRM)], 'Dim_Date'[RokMesicText] = _MaxYM)
+			    )
 			VAR _Prev = [Objednavky PM]
 			RETURN
 			    IF(NOT ISBLANK(_Current) && NOT ISBLANK(_Prev), _Current - _Prev, BLANK())
@@ -101,104 +141,127 @@ table _Measures
 		lineageTag: m0000011-0000-4000-8000-000000000011
 
 	measure 'MoM Trend Indikator' =
-			VAR _Current = [Pocet Objednavek (CRM)]
 			VAR _DeltaPct = [Objednavky MoM %]
 			VAR _DeltaAbs = [Objednavky MoM Abs]
 			RETURN
-			    IF(
-			        ISBLANK(_Current),
-			        BLANK(),
-			        SWITCH(
-			            TRUE(),
-			            ISBLANK(_DeltaPct), BLANK(),
-			            _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (+" & FORMAT(_DeltaAbs, "#,0") & ")",
-			            _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (" & FORMAT(_DeltaAbs, "#,0") & ")",
-			            "▬ 0.0 % (0)"
-			        )
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_DeltaPct), BLANK(),
+			        _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (+" & FORMAT(_DeltaAbs, "#,0") & ")",
+			        _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (" & FORMAT(_DeltaAbs, "#,0") & ")",
+			        "▬ 0.0 % (0)"
 			    )
 		displayFolder: 03. Time Intelligence (MoM)
 		lineageTag: m0000012-0000-4000-8000-000000000012
 
 	measure 'MoM Letenky Indikator' =
-			VAR _Current = [Pocet Letenek]
-			VAR _Prev = CALCULATE([Pocet Letenek], DATEADD('Dim_Date'[Date], -1, MONTH))
+			VAR _MaxYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALLSELECTED('Dim_Date'[RokMesicText]), NOT ISBLANK([Pocet Letenek])))
+			VAR _PrevYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALL('Dim_Date'[RokMesicText]), 'Dim_Date'[RokMesicText] < _MaxYM && NOT ISBLANK([Pocet Letenek])))
+			VAR _Current =
+			    IF(
+			        HASONEVALUE('Dim_Date'[RokMesicText]),
+			        [Pocet Letenek],
+			        CALCULATE([Pocet Letenek], 'Dim_Date'[RokMesicText] = _MaxYM)
+			    )
+			VAR _Prev =
+			    IF(
+			        HASONEVALUE('Dim_Date'[RokMesicText]),
+			        CALCULATE([Pocet Letenek], DATEADD('Dim_Date'[Date], -1, MONTH)),
+			        CALCULATE([Pocet Letenek], 'Dim_Date'[RokMesicText] = _PrevYM)
+			    )
 			VAR _DeltaAbs = IF(NOT ISBLANK(_Current) && NOT ISBLANK(_Prev), _Current - _Prev, BLANK())
 			VAR _DeltaPct = DIVIDE(_DeltaAbs, _Prev, BLANK())
 			RETURN
-			    IF(
-			        ISBLANK(_Current),
-			        BLANK(),
-			        SWITCH(
-			            TRUE(),
-			            ISBLANK(_DeltaPct), BLANK(),
-			            _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (+" & FORMAT(_DeltaAbs, "#,0") & ")",
-			            _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (" & FORMAT(_DeltaAbs, "#,0") & ")",
-			            "▬ 0.0 % (0)"
-			        )
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_DeltaPct), BLANK(),
+			        _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (+" & FORMAT(_DeltaAbs, "#,0") & ")",
+			        _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (" & FORMAT(_DeltaAbs, "#,0") & ")",
+			        "▬ 0.0 % (0)"
 			    )
 		displayFolder: 03. Time Intelligence (MoM)
 		lineageTag: m0000021-0000-4000-8000-000000000021
 
 	measure 'MoM Kampane Indikator' =
-			VAR _Current = [Pocet Kampani]
+			VAR _MaxYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALLSELECTED('Dim_Date'[RokMesicText]), NOT ISBLANK([Pocet Objednavek (CRM)])))
+			VAR _PrevYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALL('Dim_Date'[RokMesicText]), 'Dim_Date'[RokMesicText] < _MaxYM && NOT ISBLANK([Pocet Objednavek (CRM)])))
+			VAR _Current =
+			    IF(
+			        HASONEVALUE('Dim_Date'[RokMesicText]),
+			        [Pocet Kampani],
+			        CALCULATE([Pocet Kampani], 'Dim_Date'[RokMesicText] = _MaxYM)
+			    )
 			VAR _Prev =
-			     COALESCE(
+			    IF(
+			        HASONEVALUE('Dim_Date'[RokMesicText]),
 			        CALCULATE([Pocet Kampani], DATEADD('Dim_Date'[Date], -1, MONTH)),
-			        CALCULATE([Pocet Kampani], PREVIOUSMONTH('Dim_Date'[Date]))
+			        CALCULATE([Pocet Kampani], 'Dim_Date'[RokMesicText] = _PrevYM)
 			    )
 			VAR _DeltaAbs = IF(NOT ISBLANK(_Current) && NOT ISBLANK(_Prev) && _Prev > 0, _Current - _Prev, BLANK())
 			VAR _DeltaPct = DIVIDE(_DeltaAbs, _Prev, BLANK())
 			RETURN
-			    IF(
-			        ISBLANK(_Current),
-			        BLANK(),
-			        SWITCH(
-			            TRUE(),
-			            ISBLANK(_DeltaPct), "▬ aktivní kampaně",
-			            _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (+" & FORMAT(_DeltaAbs, "#,0") & ")",
-			            _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (" & FORMAT(_DeltaAbs, "#,0") & ")",
-			            "▬ 0.0 % (0)"
-			        )
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_DeltaPct), "▬ 0.0 % (0)",
+			        _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (+" & FORMAT(_DeltaAbs, "#,0") & ")",
+			        _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (" & FORMAT(_DeltaAbs, "#,0") & ")",
+			        "▬ 0.0 % (0)"
 			    )
 		displayFolder: 03. Time Intelligence (MoM)
 		lineageTag: m0000022-0000-4000-8000-000000000022
 
 	measure 'MoM CPA Indikator' =
-			VAR _Current = [CPA]
-			VAR _Prev = CALCULATE([CPA], DATEADD('Dim_Date'[Date], -1, MONTH))
+			VAR _MaxYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALLSELECTED('Dim_Date'[RokMesicText]), NOT ISBLANK([CPA])))
+			VAR _PrevYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALL('Dim_Date'[RokMesicText]), 'Dim_Date'[RokMesicText] < _MaxYM && NOT ISBLANK([CPA])))
+			VAR _Current =
+			    IF(
+			        HASONEVALUE('Dim_Date'[RokMesicText]),
+			        [CPA],
+			        CALCULATE([CPA], 'Dim_Date'[RokMesicText] = _MaxYM)
+			    )
+			VAR _Prev =
+			    IF(
+			        HASONEVALUE('Dim_Date'[RokMesicText]),
+			        CALCULATE([CPA], DATEADD('Dim_Date'[Date], -1, MONTH)),
+			        CALCULATE([CPA], 'Dim_Date'[RokMesicText] = _PrevYM)
+			    )
 			VAR _DeltaAbs = IF(NOT ISBLANK(_Current) && NOT ISBLANK(_Prev), _Current - _Prev, BLANK())
 			VAR _DeltaPct = DIVIDE(_DeltaAbs, _Prev, BLANK())
 			RETURN
-			    IF(
-			        ISBLANK(_Current),
-			        BLANK(),
-			        SWITCH(
-			            TRUE(),
-			            ISBLANK(_DeltaPct), BLANK(),
-			            _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (vs PM)",
-			            _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (vs PM)",
-			            "▬ 0.0 % (vs PM)"
-			        )
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_DeltaPct), BLANK(),
+			        _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (+" & FORMAT(_DeltaAbs, "#,0") & " Kč)",
+			        _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (" & FORMAT(_DeltaAbs, "#,0") & " Kč)",
+			        "▬ 0.0 % (0 Kč)"
 			    )
 		displayFolder: 03. Time Intelligence (MoM)
 		lineageTag: m0000023-0000-4000-8000-000000000023
 
 	measure 'MoM CR Indikator' =
-			VAR _Current = [CR %]
-			VAR _Prev = CALCULATE([CR %], DATEADD('Dim_Date'[Date], -1, MONTH))
-			VAR _DeltaAbs = IF(NOT ISBLANK(_Current) && NOT ISBLANK(_Prev), _Current - _Prev, BLANK())
-			VAR _DeltaPct = DIVIDE(_DeltaAbs, _Prev, BLANK())
-			RETURN
+			VAR _MaxYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALLSELECTED('Dim_Date'[RokMesicText]), NOT ISBLANK([CR %])))
+			VAR _PrevYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALL('Dim_Date'[RokMesicText]), 'Dim_Date'[RokMesicText] < _MaxYM && NOT ISBLANK([CR %])))
+			VAR _Current =
 			    IF(
-			        ISBLANK(_Current),
-			        BLANK(),
-			        SWITCH(
-			            TRUE(),
-			            ISBLANK(_DeltaPct), BLANK(),
-			            _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (vs PM)",
-			            _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (vs PM)",
-			            "▬ 0.0 % (vs PM)"
-			        )
+			        HASONEVALUE('Dim_Date'[RokMesicText]),
+			        [CR %],
+			        CALCULATE([CR %], 'Dim_Date'[RokMesicText] = _MaxYM)
+			    )
+			VAR _Prev =
+			    IF(
+			        HASONEVALUE('Dim_Date'[RokMesicText]),
+			        CALCULATE([CR %], DATEADD('Dim_Date'[Date], -1, MONTH)),
+			        CALCULATE([CR %], 'Dim_Date'[RokMesicText] = _PrevYM)
+			    )
+			VAR _DeltaPP = IF(NOT ISBLANK(_Current) && NOT ISBLANK(_Prev), (_Current - _Prev) * 100, BLANK())
+			VAR _DeltaPct = DIVIDE(_Current - _Prev, _Prev, BLANK())
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_DeltaPP), BLANK(),
+			        _DeltaPP > 0.0001, "▲ +" & FORMAT(_DeltaPP, "0.00") & " p.b. (+" & FORMAT(_DeltaPct, "0.0 %") & ")",
+			        _DeltaPP < -0.0001, "▼ " & FORMAT(_DeltaPP, "0.00") & " p.b. (" & FORMAT(_DeltaPct, "0.0 %") & ")",
+			        "▬ 0.00 p.b. (0.0 %)"
 			    )
 		displayFolder: 03. Time Intelligence (MoM)
 		lineageTag: m0000024-0000-4000-8000-000000000024
@@ -208,13 +271,81 @@ table _Measures
 			RETURN
 			    SWITCH(
 			        TRUE(),
-			        ISBLANK(_DeltaPct), "#64748B",
-			        _DeltaPct > 0, "#10B981",
-			        _DeltaPct < 0, "#EF4444",
+			        ISBLANK(_DeltaPct), "#F59E0B",
+			        _DeltaPct > 0.0001, "#10B981",
+			        _DeltaPct < -0.0001, "#EF4444",
 			        "#F59E0B"
 			    )
 		displayFolder: 03. Time Intelligence (MoM)
 		lineageTag: m0000013-0000-4000-8000-000000000013
+
+	measure 'MoM Letenky Barva' =
+			VAR _MaxYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALLSELECTED('Dim_Date'[RokMesicText]), NOT ISBLANK([Pocet Letenek])))
+			VAR _PrevYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALL('Dim_Date'[RokMesicText]), 'Dim_Date'[RokMesicText] < _MaxYM && NOT ISBLANK([Pocet Letenek])))
+			VAR _Current = IF(HASONEVALUE('Dim_Date'[RokMesicText]), [Pocet Letenek], CALCULATE([Pocet Letenek], 'Dim_Date'[RokMesicText] = _MaxYM))
+			VAR _Prev = IF(HASONEVALUE('Dim_Date'[RokMesicText]), CALCULATE([Pocet Letenek], DATEADD('Dim_Date'[Date], -1, MONTH)), CALCULATE([Pocet Letenek], 'Dim_Date'[RokMesicText] = _PrevYM))
+			VAR _Delta = _Current - _Prev
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_Current) || ISBLANK(_Prev), "#F59E0B",
+			        _Delta > 0, "#10B981",
+			        _Delta < 0, "#EF4444",
+			        "#F59E0B"
+			    )
+		displayFolder: 03. Time Intelligence (MoM)
+		lineageTag: m0000027-0000-4000-8000-000000000027
+
+	measure 'MoM Kampane Barva' =
+			VAR _MaxYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALLSELECTED('Dim_Date'[RokMesicText]), NOT ISBLANK([Pocet Objednavek (CRM)])))
+			VAR _PrevYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALL('Dim_Date'[RokMesicText]), 'Dim_Date'[RokMesicText] < _MaxYM && NOT ISBLANK([Pocet Objednavek (CRM)])))
+			VAR _Current = IF(HASONEVALUE('Dim_Date'[RokMesicText]), [Pocet Kampani], CALCULATE([Pocet Kampani], 'Dim_Date'[RokMesicText] = _MaxYM))
+			VAR _Prev = IF(HASONEVALUE('Dim_Date'[RokMesicText]), CALCULATE([Pocet Kampani], DATEADD('Dim_Date'[Date], -1, MONTH)), CALCULATE([Pocet Kampani], 'Dim_Date'[RokMesicText] = _PrevYM))
+			VAR _Delta = _Current - _Prev
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_Current) || ISBLANK(_Prev) || _Prev = 0, "#F59E0B",
+			        _Delta > 0, "#10B981",
+			        _Delta < 0, "#EF4444",
+			        "#F59E0B"
+			    )
+		displayFolder: 03. Time Intelligence (MoM)
+		lineageTag: m0000028-0000-4000-8000-000000000028
+
+	measure 'MoM CPA Barva' =
+			VAR _MaxYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALLSELECTED('Dim_Date'[RokMesicText]), NOT ISBLANK([CPA])))
+			VAR _PrevYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALL('Dim_Date'[RokMesicText]), 'Dim_Date'[RokMesicText] < _MaxYM && NOT ISBLANK([CPA])))
+			VAR _Current = IF(HASONEVALUE('Dim_Date'[RokMesicText]), [CPA], CALCULATE([CPA], 'Dim_Date'[RokMesicText] = _MaxYM))
+			VAR _Prev = IF(HASONEVALUE('Dim_Date'[RokMesicText]), CALCULATE([CPA], DATEADD('Dim_Date'[Date], -1, MONTH)), CALCULATE([CPA], 'Dim_Date'[RokMesicText] = _PrevYM))
+			VAR _Delta = _Current - _Prev
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_Current) || ISBLANK(_Prev), "#F59E0B",
+			        _Delta < -0.01, "#10B981",
+			        _Delta > 0.01, "#EF4444",
+			        "#F59E0B"
+			    )
+		displayFolder: 03. Time Intelligence (MoM)
+		lineageTag: m0000029-0000-4000-8000-000000000029
+
+	measure 'MoM CR Barva' =
+			VAR _MaxYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALLSELECTED('Dim_Date'[RokMesicText]), NOT ISBLANK([CR %])))
+			VAR _PrevYM = CALCULATE(MAX('Dim_Date'[RokMesicText]), FILTER(ALL('Dim_Date'[RokMesicText]), 'Dim_Date'[RokMesicText] < _MaxYM && NOT ISBLANK([CR %])))
+			VAR _Current = IF(HASONEVALUE('Dim_Date'[RokMesicText]), [CR %], CALCULATE([CR %], 'Dim_Date'[RokMesicText] = _MaxYM))
+			VAR _Prev = IF(HASONEVALUE('Dim_Date'[RokMesicText]), CALCULATE([CR %], DATEADD('Dim_Date'[Date], -1, MONTH)), CALCULATE([CR %], 'Dim_Date'[RokMesicText] = _PrevYM))
+			VAR _Delta = _Current - _Prev
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_Current) || ISBLANK(_Prev), "#F59E0B",
+			        _Delta > 0.000001, "#10B981",
+			        _Delta < -0.000001, "#EF4444",
+			        "#F59E0B"
+			    )
+		displayFolder: 03. Time Intelligence (MoM)
+		lineageTag: m0000030-0000-4000-8000-000000000030
 
 	measure 'Top Zdroj Nazev' =
 			VAR _Top =
@@ -225,9 +356,13 @@ table _Measures
 			        DESC
 			    )
 			VAR _Name = MAXX(_Top, dataGA[sessionSource])
-			VAR _Total = [Pocet Objednavek (CRM)]
+			VAR _TotalTracked =
+			    CALCULATE(
+			        [Pocet Objednavek (CRM)],
+			        FILTER(ALLSELECTED(dataGA[sessionSource]), NOT ISBLANK(dataGA[sessionSource]) && dataGA[sessionSource] <> "(not set)")
+			    )
 			VAR _TopVal = CALCULATE([Pocet Objednavek (CRM)], dataGA[sessionSource] = _Name)
-			VAR _Share = DIVIDE(_TopVal, _Total, 0)
+			VAR _Share = DIVIDE(_TopVal, _TotalTracked, 0)
 			RETURN
 			    _Name & " — " & FORMAT(_TopVal, "#,0") & " obj. (" & FORMAT(_Share, "0.0 %") & ")"
 		displayFolder: 04. Insight Karty
@@ -242,11 +377,15 @@ table _Measures
 			        DESC
 			    )
 			VAR _Name = MAXX(_Top, dataGA[sessionSource])
-			VAR _Total = [Pocet Objednavek (CRM)]
+			VAR _TotalTracked =
+			    CALCULATE(
+			        [Pocet Objednavek (CRM)],
+			        FILTER(ALLSELECTED(dataGA[sessionSource]), NOT ISBLANK(dataGA[sessionSource]) && dataGA[sessionSource] <> "(not set)")
+			    )
 			VAR _TopVal = CALCULATE([Pocet Objednavek (CRM)], dataGA[sessionSource] = _Name)
-			VAR _Share = DIVIDE(_TopVal, _Total, 0)
+			VAR _Share = DIVIDE(_TopVal, _TotalTracked, 0)
 			RETURN
-			    FORMAT(_TopVal, "#,0") & " objednávek (" & FORMAT(_Share, "0.0 %") & ")"
+			    "Hodnota v závorce (" & FORMAT(_Share, "0.0 %") & ") vyjadřuje podíl zdroje '" & _Name & "' na všech sledovaných objednávkách v GA (" & FORMAT(_TopVal, "#,0") & " z " & FORMAT(_TotalTracked, "#,0") & ")."
 		displayFolder: 04. Insight Karty
 		lineageTag: m0000016-0000-4000-8000-000000000016
 
@@ -259,9 +398,13 @@ table _Measures
 			        DESC
 			    )
 			VAR _Name = COALESCE(MAXX(_Top, dataGA[sessionCampaignName]), "(organic)")
-			VAR _Total = [Pocet Objednavek (CRM)]
+			VAR _TotalTracked =
+			    CALCULATE(
+			        [Pocet Objednavek (CRM)],
+			        FILTER(ALLSELECTED(dataGA[sessionCampaignName]), NOT ISBLANK(dataGA[sessionCampaignName]) && dataGA[sessionCampaignName] <> "(not set)")
+			    )
 			VAR _TopVal = CALCULATE([Pocet Objednavek (CRM)], dataGA[sessionCampaignName] = _Name)
-			VAR _Share = DIVIDE(_TopVal, _Total, 0)
+			VAR _Share = DIVIDE(_TopVal, _TotalTracked, 0)
 			RETURN
 			    _Name & " — " & FORMAT(_TopVal, "#,0") & " obj. (" & FORMAT(_Share, "0.0 %") & ")"
 		displayFolder: 04. Insight Karty
@@ -276,11 +419,15 @@ table _Measures
 			        DESC
 			    )
 			VAR _Name = COALESCE(MAXX(_Top, dataGA[sessionCampaignName]), "(organic)")
-			VAR _Total = [Pocet Objednavek (CRM)]
+			VAR _TotalTracked =
+			    CALCULATE(
+			        [Pocet Objednavek (CRM)],
+			        FILTER(ALLSELECTED(dataGA[sessionCampaignName]), NOT ISBLANK(dataGA[sessionCampaignName]) && dataGA[sessionCampaignName] <> "(not set)")
+			    )
 			VAR _TopVal = CALCULATE([Pocet Objednavek (CRM)], dataGA[sessionCampaignName] = _Name)
-			VAR _Share = DIVIDE(_TopVal, _Total, 0)
+			VAR _Share = DIVIDE(_TopVal, _TotalTracked, 0)
 			RETURN
-			    FORMAT(_TopVal, "#,0") & " objednávek (" & FORMAT(_Share, "0.0 %") & ")"
+			    "Hodnota v závorce (" & FORMAT(_Share, "0.0 %") & ") vyjadřuje podíl kampaně '" & _Name & "' na všech sledovaných objednávkách v GA (" & FORMAT(_TopVal, "#,0") & " z " & FORMAT(_TotalTracked, "#,0") & ")."
 		displayFolder: 04. Insight Karty
 		lineageTag: m0000018-0000-4000-8000-000000000018
 
@@ -297,7 +444,7 @@ table _Measures
 			VAR _TopVal = CALCULATE([Pocet Letenek], datadestinace[nazev] = _Name)
 			VAR _Share = DIVIDE(_TopVal, _Total, 0)
 			RETURN
-			    _Name & " — " & FORMAT(_TopVal, "#,0") & " let. (" & FORMAT(_Share, "0.0 %") & ")"
+			    _Name & " — " & FORMAT(_TopVal, "#,0") & " (" & FORMAT(_Share, "0.0 %") & ")"
 		displayFolder: 04. Insight Karty
 		lineageTag: m0000019-0000-4000-8000-000000000019
 
@@ -314,7 +461,7 @@ table _Measures
 			VAR _TopVal = CALCULATE([Pocet Letenek], datadestinace[nazev] = _Name)
 			VAR _Share = DIVIDE(_TopVal, _Total, 0)
 			RETURN
-			    FORMAT(_TopVal, "#,0") & " letenek (" & FORMAT(_Share, "0.0 %") & ")"
+			    "Hodnota v závorce (" & FORMAT(_Share, "0.0 %") & ") vyjadřuje podíl destinace '" & _Name & "' na celkovém počtu prodaných letenek (" & FORMAT(_TopVal, "#,0") & " z " & FORMAT(_Total, "#,0") & ")."
 		displayFolder: 04. Insight Karty
 		lineageTag: m0000020-0000-4000-8000-000000000020
 
@@ -350,4 +497,3 @@ table _Measures
 		source = {1}
 
 	annotation PBI_Id = f1e2d3c4b5a697887766554433221100
-

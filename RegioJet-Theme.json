@@ -115,14 +115,38 @@
         ],
         "subTitle": [
           {
-            "show": true,
-            "fontSize": 10.5,
-            "fontFamily": "Segoe UI",
-            "fontColor": {
+            "show": false
+          }
+        ]
+      }
+    },
+    "multiRowCard": {
+      "*": {
+        "cardTitle": [
+          {
+            "color": {
               "solid": {
-                "color": "#64748B"
+                "color": "#1E1E1E"
               }
-            }
+            },
+            "fontSize": 11,
+            "fontFamily": "Segoe UI Semibold"
+          }
+        ],
+        "dataLabels": [
+          {
+            "color": {
+              "solid": {
+                "color": "#475569"
+              }
+            },
+            "fontSize": 11,
+            "fontFamily": "Segoe UI Semibold"
+          }
+        ],
+        "categoryLabels": [
+          {
+            "show": false
           }
         ]
       }

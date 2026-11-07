@@ -27,27 +27,44 @@
                 }
               },
               "queryRef": "_Measures.Pocet Kampani",
-              "nativeQueryRef": "Kampaně"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "MoM Kampane Indikator"
-                }
-              },
-              "queryRef": "_Measures.MoM Kampane Indikator",
-              "nativeQueryRef": "MoM"
+              "nativeQueryRef": "Aktivních kampaní"
             }
           ]
         }
       }
     },
     "objects": {
+      "dataLabels": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#1E1E1E'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "18D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
+                }
+              }
+            }
+          }
+        }
+      ],
       "categoryLabels": [
         {
           "properties": {
@@ -77,6 +94,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'Aktivních kampaní'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

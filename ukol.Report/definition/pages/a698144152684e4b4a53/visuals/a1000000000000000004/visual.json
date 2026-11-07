@@ -27,27 +27,44 @@
                 }
               },
               "queryRef": "_Measures.Pocet Objednavek (CRM)",
-              "nativeQueryRef": "Objednávky"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "MoM Trend Indikator"
-                }
-              },
-              "queryRef": "_Measures.MoM Trend Indikator",
-              "nativeQueryRef": "MoM"
+              "nativeQueryRef": "Počet objednávek"
             }
           ]
         }
       }
     },
     "objects": {
+      "dataLabels": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#1E1E1E'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "18D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
+                }
+              }
+            }
+          }
+        }
+      ],
       "categoryLabels": [
         {
           "properties": {
@@ -77,6 +94,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'Počet objednávek'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

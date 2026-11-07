@@ -27,27 +27,44 @@
                 }
               },
               "queryRef": "_Measures.CR %",
-              "nativeQueryRef": "CR"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "MoM CR Indikator"
-                }
-              },
-              "queryRef": "_Measures.MoM CR Indikator",
-              "nativeQueryRef": "MoM"
+              "nativeQueryRef": "CR %"
             }
           ]
         }
       }
     },
     "objects": {
+      "dataLabels": [
+        {
+          "properties": {
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#1E1E1E'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "18D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
+                }
+              }
+            }
+          }
+        }
+      ],
       "categoryLabels": [
         {
           "properties": {
@@ -77,6 +94,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'Konverzní poměr (CR)'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }
