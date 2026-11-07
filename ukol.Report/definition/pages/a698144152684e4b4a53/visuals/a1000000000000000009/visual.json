@@ -23,10 +23,10 @@
                       "Entity": "dataGA"
                     }
                   },
-                  "Property": "sessionSource"
+                  "Property": "Zdroj objednávky (Top 10)"
                 }
               },
-              "queryRef": "dataGA.sessionSource",
+              "queryRef": "dataGA.Zdroj objednávky (Top 10)",
               "nativeQueryRef": "Zdroj objednávky",
               "active": true
             }
@@ -183,5 +183,62 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "filter_top10_sources_nonblank",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Pocet Objednavek Zdroje (Top 10)"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "m",
+              "Entity": "_Measures",
+              "Type": 0
+            },
+            {
+              "Name": "g",
+              "Entity": "dataGA",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Comparison": {
+                  "ComparisonKind": 2,
+                  "Left": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "m"
+                        }
+                      },
+                      "Property": "Pocet Objednavek Zdroje (Top 10)"
+                    }
+                  },
+                  "Right": {
+                    "Literal": {
+                      "Value": "1L"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
   }
 }

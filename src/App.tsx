@@ -68,12 +68,15 @@ const MONTHLY_DATA: MonthlyRecord[] = [
 
 const SOURCE_DATA: SourceRecord[] = [
   { source: '(direct)', medium: '(none)', orders: 38, tickets: 64, adsCost: 0, adsClicks: 0 },
-  { source: 'google', medium: 'cpc', orders: 30, tickets: 49, adsCost: 2132500, adsClicks: 620000 },
-  { source: 'seznam', medium: 'cpc', orders: 9, tickets: 16, adsCost: 940000, adsClicks: 280000 },
-  { source: 'studentagency.eu', medium: 'referral', orders: 5, tickets: 9, adsCost: 0, adsClicks: 0 },
-  { source: 'bing', medium: 'cpc', orders: 3, tickets: 5, adsCost: 310000, adsClicks: 95000 },
-  { source: 'dovolena.cz', medium: 'referral', orders: 2, tickets: 4, adsCost: 0, adsClicks: 0 },
-  { source: 'platba.sa.cz', medium: 'referral', orders: 1, tickets: 3, adsCost: 0, adsClicks: 0 },
+  { source: 'google (cpc)', medium: 'cpc', orders: 19, tickets: 31, adsCost: 2132500, adsClicks: 620000 },
+  { source: 'google (organic)', medium: 'organic', orders: 11, tickets: 18, adsCost: 0, adsClicks: 0 },
+  { source: 'seznam (cpc)', medium: 'cpc', orders: 5, tickets: 9, adsCost: 940000, adsClicks: 280000 },
+  { source: 'studentagency.eu (referral)', medium: 'referral', orders: 4, tickets: 7, adsCost: 0, adsClicks: 0 },
+  { source: 'seznam (organic)', medium: 'organic', orders: 3, tickets: 5, adsCost: 0, adsClicks: 0 },
+  { source: '(not set)', medium: '(not set)', orders: 2, tickets: 4, adsCost: 0, adsClicks: 0 },
+  { source: 'bing (cpc)', medium: 'cpc', orders: 2, tickets: 4, adsCost: 310000, adsClicks: 95000 },
+  { source: 'dovolena.cz (referral)', medium: 'referral', orders: 2, tickets: 4, adsCost: 0, adsClicks: 0 },
+  { source: 'platba.sa.cz (referral)', medium: 'referral', orders: 2, tickets: 3, adsCost: 0, adsClicks: 0 },
 ];
 
 // Aktivní letiště s geokódováním přímo na město (dataCategory: City)
@@ -441,7 +444,7 @@ export default function App() {
     const monthFactor = selectedMonth === 'ALL' ? 1 : 0.22;
     return SOURCE_DATA.filter(
       (s) =>
-        (selectedSource === 'ALL' || s.source === selectedSource) &&
+        (selectedSource === 'ALL' || s.source === selectedSource || s.source.startsWith(selectedSource + ' ')) &&
         (selectedMedium === 'ALL' || s.medium === selectedMedium)
     )
       .map((s) => {

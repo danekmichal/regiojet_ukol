@@ -20,6 +20,7 @@ table datadestinace
 		annotation SummarizationSetBy = Automatic
 
 	column 'Mapa Lokace' =
+			VAR _HasTickets = NOT ISEMPTY ( RELATEDTABLE ( dataItiner ) )
 			VAR _Raw = TRIM ( datadestinace[nazev] )
 			VAR _Clean =
 			    TRIM (
@@ -49,7 +50,7 @@ table datadestinace
 			RETURN
 			    SWITCH (
 			        TRUE (),
-			        ISBLANK ( _Raw ) || _Raw = "0" || CONTAINSSTRING ( _Raw, "&#" ) || CONTAINSSTRING ( _Raw, "stanice" ) || CONTAINSSTRING ( _Raw, "TGV" ), BLANK (),
+			        NOT _HasTickets || ISBLANK ( _Raw ) || _Raw = "0" || CONTAINSSTRING ( _Raw, "&#" ) || CONTAINSSTRING ( _Raw, "stanice" ) || CONTAINSSTRING ( _Raw, "TGV" ), BLANK (),
 			        CONTAINSSTRING ( _Raw, "Václava Havla" ) || CONTAINSSTRING ( _Raw, "Ruzyně" ) || CONTAINSSTRING ( _Raw, "Praha" ), "Prague, Czechia",
 			        CONTAINSSTRING ( _Raw, "Tuřany" ) || _Clean = "Brno", "Brno, Czechia",
 			        CONTAINSSTRING ( _Raw, "Mošnov" ) || CONTAINSSTRING ( _Raw, "Janáčka" ) || _Clean = "Ostrava", "Ostrava, Czechia",

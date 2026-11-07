@@ -2,9 +2,14 @@ table _Measures
 	lineageTag: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6e
 
 	measure 'Pocet Objednavek (CRM)' =
-			CALCULATE(
-			    DISTINCTCOUNT(dataCRM[id_rezervace]),
-			    KEEPFILTERS(NOT ISBLANK(dataCRM[datum_rezervace]))
+			IF(
+			    ISINSCOPE(datadestinace[Mapa Lokace]) && ISBLANK(SELECTEDVALUE(datadestinace[Mapa Lokace])),
+			    BLANK(),
+			    CALCULATE(
+			        DISTINCTCOUNT(dataCRM[id_rezervace]),
+			        KEEPFILTERS(NOT ISBLANK(dataCRM[datum_rezervace])),
+			        CROSSFILTER(dataLet[id_rezervace], dataCRM[id_rezervace], Both)
+			    )
 			)
 		formatString: #,0
 		displayFolder: 01. Objednávky & Letenky
@@ -21,21 +26,20 @@ table _Measures
 		lineageTag: m0000002-0000-4000-8000-000000000002
 
 	measure 'Pocet Objednavek Zdroje (Top 10)' =
-			VAR _CurrSource = SELECTEDVALUE(dataGA[sessionSource])
+			VAR _CurrSource = SELECTEDVALUE(dataGA[Zdroj objednávky (Top 10)])
 			VAR _Top10Sources =
 			    TOPN(
 			        10,
 			        FILTER(
-			            ALLSELECTED(dataGA[sessionSource]),
-			            NOT ISBLANK(dataGA[sessionSource])
-			                && dataGA[sessionSource] <> "(not set)"
+			            ALLSELECTED(dataGA[Zdroj objednávky (Top 10)]),
+			            NOT ISBLANK(dataGA[Zdroj objednávky (Top 10)])
 			        ),
 			        [Pocet Objednavek (CRM)],
 			        DESC
 			    )
 			RETURN
 			    IF(
-			        ISBLANK(_CurrSource) || _CurrSource = "(not set)",
+			        ISBLANK(_CurrSource),
 			        BLANK(),
 			        CALCULATE(
 			            [Pocet Objednavek (CRM)],
@@ -47,10 +51,14 @@ table _Measures
 		lineageTag: m0000026-0000-4000-8000-000000000026
 
 	measure 'Pocet Letenek' =
-			CALCULATE(
-			    COUNTROWS(dataLet),
-			    KEEPFILTERS(NOT ISBLANK(dataCRM[id_rezervace])),
-			    KEEPFILTERS(NOT ISBLANK('Dim_Date'[RokMesicText]))
+			IF(
+			    ISINSCOPE(datadestinace[Mapa Lokace]) && ISBLANK(SELECTEDVALUE(datadestinace[Mapa Lokace])),
+			    BLANK(),
+			    CALCULATE(
+			        COUNTROWS(dataLet),
+			        KEEPFILTERS(NOT ISBLANK(dataCRM[id_rezervace])),
+			        KEEPFILTERS(NOT ISBLANK('Dim_Date'[RokMesicText]))
+			    )
 			)
 		formatString: #,0
 		displayFolder: 01. Objednávky & Letenky
@@ -466,20 +474,41 @@ table _Measures
 		lineageTag: m0000020-0000-4000-8000-000000000020
 
 	measure 'Nejcastejsi Trasa Letiste' =
-			VAR _TopRoute =
-			    TOPN(
-			        1,
-			        FILTER(
-			            ALLSELECTED(dataItiner[Letecká trasa (Odkud ➔ Kam)]),
-			            NOT ISBLANK(dataItiner[Letecká trasa (Odkud ➔ Kam)])
-			        ),
-			        [Pocet Letenek],
-			        DESC
-			    )
-			RETURN
-			    MAXX(_TopRoute, dataItiner[Letecká trasa (Odkud ➔ Kam)])
+			IF(
+			    ISBLANK([Pocet Letenek]),
+			    BLANK(),
+			    VAR _TopRoute =
+			        TOPN(
+			            1,
+			            FILTER(
+			                VALUES(dataItiner[Letecká trasa (Odkud ➔ Kam)]),
+			                NOT ISBLANK(dataItiner[Letecká trasa (Odkud ➔ Kam)])
+			                    && NOT ISBLANK([Pocet Letenek])
+			            ),
+			            [Pocet Letenek],
+			            DESC
+			        )
+			    RETURN
+			        MAXX(_TopRoute, dataItiner[Letecká trasa (Odkud ➔ Kam)])
+			)
 		displayFolder: 04. Insight Karty
 		lineageTag: m0000025-0000-4000-8000-000000000025
+
+	measure 'Nazev Letiste Tooltip' =
+			IF(
+			    ISBLANK([Pocet Letenek]),
+			    BLANK(),
+			    CONCATENATEX(
+			        FILTER(
+			            VALUES(datadestinace[nazev]),
+			            NOT ISBLANK([Pocet Letenek])
+			        ),
+			        datadestinace[nazev],
+			        ", "
+			    )
+			)
+		displayFolder: 04. Insight Karty
+		lineageTag: m0000031-0000-4000-8000-000000000031
 
 	column Value
 		dataType: int64
