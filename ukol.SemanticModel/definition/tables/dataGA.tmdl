@@ -47,23 +47,17 @@ table dataGA
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Zdroj objednávky (Top 10)' =
-			VAR _DistinctSources =
-			    CALCULATE ( DISTINCTCOUNTNOBLANK ( dataGA[sessionSource] ), ALL ( dataGA ) )
+	column 'Zdroj a médium objednávky' =
 			VAR _Src = COALESCE ( dataGA[sessionSource], "(not set)" )
 			VAR _Med = COALESCE ( dataGA[sessionMedium], "(none)" )
 			RETURN
 			    IF (
-			        _DistinctSources >= 10,
+			        _Med = "(none)" || _Med = "(not set)" || _Med = _Src || _Src = "(not set)",
 			        _Src,
-			        IF (
-			            _Med = "(none)" || _Med = "(not set)" || _Med = _Src || _Src = "(not set)",
-			            _Src,
-			            _Src & " (" & _Med & ")"
-			        )
+			        _Src & " (" & _Med & ")"
 			    )
 		dataType: string
-		lineageTag: f2dc2709-510a-47b3-b962-44d1b3111af1
+		lineageTag: a8b9c0d1-621b-48c4-c073-55e2c4222bf2
 		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic

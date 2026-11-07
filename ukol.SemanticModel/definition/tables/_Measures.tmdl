@@ -3,7 +3,7 @@ table _Measures
 
 	measure 'Pocet Objednavek (CRM)' =
 			IF(
-			    ISINSCOPE(datadestinace[Mapa Lokace]) && ISBLANK(SELECTEDVALUE(datadestinace[Mapa Lokace])),
+			    ISINSCOPE(datadestinace[Město destinace]) && ISBLANK(SELECTEDVALUE(datadestinace[Město destinace])),
 			    BLANK(),
 			    CALCULATE(
 			        DISTINCTCOUNT(dataCRM[id_rezervace]),
@@ -26,25 +26,17 @@ table _Measures
 		lineageTag: m0000002-0000-4000-8000-000000000002
 
 	measure 'Pocet Objednavek Zdroje (Top 10)' =
-			VAR _CurrSource = SELECTEDVALUE(dataGA[Zdroj objednávky (Top 10)])
 			VAR _Top10Sources =
 			    TOPN(
 			        10,
-			        FILTER(
-			            ALLSELECTED(dataGA[Zdroj objednávky (Top 10)]),
-			            NOT ISBLANK(dataGA[Zdroj objednávky (Top 10)])
-			        ),
+			        ALLSELECTED(dataGA[Zdroj a médium objednávky]),
 			        [Pocet Objednavek (CRM)],
 			        DESC
 			    )
 			RETURN
-			    IF(
-			        ISBLANK(_CurrSource),
-			        BLANK(),
-			        CALCULATE(
-			            [Pocet Objednavek (CRM)],
-			            KEEPFILTERS(_Top10Sources)
-			        )
+			    CALCULATE(
+			        [Pocet Objednavek (CRM)],
+			        KEEPFILTERS(_Top10Sources)
 			    )
 		formatString: #,0
 		displayFolder: 01. Objednávky & Letenky
@@ -52,7 +44,7 @@ table _Measures
 
 	measure 'Pocet Letenek' =
 			IF(
-			    ISINSCOPE(datadestinace[Mapa Lokace]) && ISBLANK(SELECTEDVALUE(datadestinace[Mapa Lokace])),
+			    ISINSCOPE(datadestinace[Město destinace]) && ISBLANK(SELECTEDVALUE(datadestinace[Město destinace])),
 			    BLANK(),
 			    CALCULATE(
 			        COUNTROWS(dataLet),

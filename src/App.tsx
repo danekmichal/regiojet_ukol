@@ -67,6 +67,7 @@ const MONTHLY_DATA: MonthlyRecord[] = [
 ];
 
 const SOURCE_DATA: SourceRecord[] = [
+  { source: '(Blank)', medium: '(none)', orders: 3865, tickets: 6332, adsCost: 0, adsClicks: 0 },
   { source: '(direct)', medium: '(none)', orders: 38, tickets: 64, adsCost: 0, adsClicks: 0 },
   { source: 'google (cpc)', medium: 'cpc', orders: 19, tickets: 31, adsCost: 2132500, adsClicks: 620000 },
   { source: 'google (organic)', medium: 'organic', orders: 11, tickets: 18, adsCost: 0, adsClicks: 0 },
@@ -76,14 +77,13 @@ const SOURCE_DATA: SourceRecord[] = [
   { source: '(not set)', medium: '(not set)', orders: 2, tickets: 4, adsCost: 0, adsClicks: 0 },
   { source: 'bing (cpc)', medium: 'cpc', orders: 2, tickets: 4, adsCost: 310000, adsClicks: 95000 },
   { source: 'dovolena.cz (referral)', medium: 'referral', orders: 2, tickets: 4, adsCost: 0, adsClicks: 0 },
-  { source: 'platba.sa.cz (referral)', medium: 'referral', orders: 2, tickets: 3, adsCost: 0, adsClicks: 0 },
 ];
 
-// Aktivní letiště s geokódováním přímo na město (dataCategory: City)
+// Aktivní letiště s geokódováním přímo na čistý název města (dataCategory: City, bez čárky a státu)
 const ACTIVE_DESTINATIONS: DestinationRecord[] = [
   {
     city: 'Letiště Václava Havla',
-    mapLocation: 'Prague, Czechia',
+    mapLocation: 'Praha',
     country: 'Praha, ČR',
     lat: 50.0755,
     lon: 14.4378,
@@ -95,8 +95,21 @@ const ACTIVE_DESTINATIONS: DestinationRecord[] = [
     monthly: { '2023-08': 363, '2023-09': 381, '2023-10': 364, '2023-11': 365, '2023-12': 330 },
   },
   {
+    city: 'Brno Tuřany',
+    mapLocation: 'Brno',
+    country: 'Brno, ČR',
+    lat: 49.1513,
+    lon: 16.6944,
+    vystaveno: 34,
+    stornovano: 14,
+    zmeneno: 4,
+    cekaNaPlatbu: 2,
+    topRoute: 'Stansted ➔ Brno Tuřany',
+    monthly: { '2023-08': 12, '2023-09': 14, '2023-10': 10, '2023-11': 9, '2023-12': 9 },
+  },
+  {
     city: 'Vienna Intl.',
-    mapLocation: 'Vienna, Austria',
+    mapLocation: 'Vienna',
     country: 'Vídeň, Rakousko',
     lat: 48.2082,
     lon: 16.3738,
@@ -1077,16 +1090,16 @@ export default function App() {
                   <h3 className="text-sm font-bold text-[#1E1E1E] mb-3">
                     TOP 10 nejefektivnějších zdrojů objednávek
                   </h3>
-                  <div className="space-y-2.5 my-auto">
+                  <div className="space-y-2 my-auto">
                     {filteredSources.map((s) => {
-                      const maxVal = filteredSources[0]?.orders || 1;
-                      const pct = Math.max(8, (s.orders / maxVal) * 100);
+                      const maxLog = Math.log10((filteredSources[0]?.orders || 1) + 1);
+                      const pct = Math.max(14, (Math.log10(s.orders + 1) / maxLog) * 100);
                       return (
                         <div
                           key={`${s.source}-${s.medium}`}
                           className="flex items-center gap-3 text-xs"
                         >
-                          <span className="w-28 truncate text-right text-slate-600 font-medium">
+                          <span className="w-36 truncate text-right text-slate-600 font-medium">
                             {s.source}
                           </span>
                           <div className="flex-1 bg-slate-100 h-5 rounded overflow-hidden flex items-center">
@@ -1094,7 +1107,7 @@ export default function App() {
                               style={{ width: `${pct}%` }}
                               className="bg-[#FDB913] h-full rounded flex items-center justify-end pr-2 text-[10px] font-bold text-[#1E1E1E]"
                             >
-                              {s.orders}
+                              {s.orders.toLocaleString('cs-CZ')}
                             </div>
                           </div>
                         </div>

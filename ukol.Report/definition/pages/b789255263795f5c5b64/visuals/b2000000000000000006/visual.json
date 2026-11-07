@@ -23,11 +23,11 @@
                       "Entity": "datadestinace"
                     }
                   },
-                  "Property": "Mapa Lokace"
+                  "Property": "Město destinace"
                 }
               },
-              "queryRef": "datadestinace.Mapa Lokace",
-              "nativeQueryRef": "Lokace letiště",
+              "queryRef": "datadestinace.Město destinace",
+              "nativeQueryRef": "Město destinace",
               "active": true
             }
           ]
@@ -60,39 +60,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Nazev Letiste Tooltip"
-                }
-              },
-              "queryRef": "_Measures.Nazev Letiste Tooltip",
-              "nativeQueryRef": "Letiště"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
                   "Property": "Pocet Objednavek (CRM)"
                 }
               },
               "queryRef": "_Measures.Pocet Objednavek (CRM)",
               "nativeQueryRef": "Počet objednávek"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Nejcastejsi Trasa Letiste"
-                }
-              },
-              "queryRef": "_Measures.Nejcastejsi Trasa Letiste",
-              "nativeQueryRef": "Nejčastější trasa (Odkud ➔ Kam)"
             }
           ]
         }

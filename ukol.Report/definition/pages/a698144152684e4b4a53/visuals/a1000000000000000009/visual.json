@@ -23,10 +23,10 @@
                       "Entity": "dataGA"
                     }
                   },
-                  "Property": "Zdroj objednávky (Top 10)"
+                  "Property": "Zdroj a médium objednávky"
                 }
               },
-              "queryRef": "dataGA.Zdroj objednávky (Top 10)",
+              "queryRef": "dataGA.Zdroj a médium objednávky",
               "nativeQueryRef": "Zdroj objednávky",
               "active": true
             }
@@ -133,6 +133,19 @@
           }
         }
       ],
+      "valueAxis": [
+        {
+          "properties": {
+            "axisScale": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Log'"
+                }
+              }
+            }
+          }
+        }
+      ],
       "labels": [
         {
           "properties": {
@@ -140,6 +153,13 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
                 }
               }
             }
