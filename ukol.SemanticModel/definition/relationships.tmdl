@@ -1,5 +1,4 @@
 relationship AutoDetected_0c324bfa-e630-4800-9627-7db310670d6e
-	crossFilteringBehavior: bothDirections
 	fromColumn: dataLet.id_rezervace
 	toColumn: dataCRM.id_rezervace
 
@@ -17,19 +16,29 @@ relationship 524ef371-480d-3ba5-729c-e3cb52bc19c8
 	fromColumn: dataItiner.'Last id_to'
 	toColumn: datadestinace.id_letiste
 
-relationship d1e2f3a4-b5c6-4d7e-8f9a-0b1c2d3e4f5a
-	crossFilteringBehavior: bothDirections
-	fromColumn: dataItiner.'Last id_to'
-	toColumn: Dim_Letiste.id_letiste
-
 relationship 63f3ac17-ab83-b88e-16dc-73d61e609dfc
 	crossFilteringBehavior: bothDirections
 	fromCardinality: one
 	fromColumn: dataCRM.locator
 	toColumn: dataGA.customEvent:rezervacni_kod
 
+relationship e9a2ee26-ed26-46bf-bc5a-a11b6da39836
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Date.Date
+	toColumn: LocalDateTable_b6667d58-f91b-4802-bd62-9c6bd73be603.Date
+
+relationship 17e23242-41db-41f8-a16b-2e71a7639359
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Date.ZacatekMesice
+	toColumn: LocalDateTable_df21cbf1-dba3-46a9-8082-bd3485a166cf.Date
+
+relationship bc43b020-f288-47e2-b0f9-59b13837ec6a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Date.ZacatekPondeliTydne
+	toColumn: LocalDateTable_adee6681-1ccc-49b4-a2da-fff7866abb38.Date
+
 relationship 3bb9e703-770a-ff0c-0d4e-56c9801497fd
-	fromColumn: dataCRM.DatumRezervaceDen
+	fromColumn: dataCRM.datum_rezervace
 	toColumn: Dim_Date.Date
 
 relationship 05e9ea41-61af-507e-5830-969086029415

@@ -34,7 +34,12 @@ table _Measures
 			VAR _Top5Letiste =
 			    TOPN(
 			        5,
-			        ALLSELECTED(Dim_Letiste[Letiště]),
+			        FILTER(
+			            ALLSELECTED(datadestinace[nazev]),
+			            NOT ISBLANK(datadestinace[nazev])
+			                && datadestinace[nazev] <> "0"
+			                && NOT CONTAINSSTRING(datadestinace[nazev], "&#")
+			        ),
 			        [Pocet Letenek],
 			        DESC
 			    )
@@ -96,15 +101,20 @@ table _Measures
 		lineageTag: m0000011-0000-4000-8000-000000000011
 
 	measure 'MoM Trend Indikator' =
+			VAR _Current = [Pocet Objednavek (CRM)]
 			VAR _DeltaPct = [Objednavky MoM %]
 			VAR _DeltaAbs = [Objednavky MoM Abs]
 			RETURN
-			    SWITCH(
-			        TRUE(),
-			        ISBLANK(_DeltaPct), "—",
-			        _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (+" & FORMAT(_DeltaAbs, "#,0") & ")",
-			        _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (" & FORMAT(_DeltaAbs, "#,0") & ")",
-			        "▬ 0.0 % (0)"
+			    IF(
+			        ISBLANK(_Current),
+			        BLANK(),
+			        SWITCH(
+			            TRUE(),
+			            ISBLANK(_DeltaPct), BLANK(),
+			            _DeltaPct > 0, "▲ +" & FORMAT(_DeltaPct, "0.0 %") & " (+" & FORMAT(_DeltaAbs, "#,0") & ")",
+			            _DeltaPct < 0, "▼ " & FORMAT(_DeltaPct, "0.0 %") & " (" & FORMAT(_DeltaAbs, "#,0") & ")",
+			            "▬ 0.0 % (0)"
+			        )
 			    )
 		displayFolder: 03. Time Intelligence (MoM)
 		lineageTag: m0000012-0000-4000-8000-000000000012
@@ -172,19 +182,19 @@ table _Measures
 			VAR _Top =
 			    TOPN(
 			        1,
-			        ALLSELECTED(Dim_Letiste[Letiště]),
+			        FILTER(ALLSELECTED(datadestinace[nazev]), NOT ISBLANK(datadestinace[nazev]) && datadestinace[nazev] <> "0"),
 			        [Pocet Letenek],
 			        DESC
 			    )
 			RETURN
-			    MAXX(_Top, Dim_Letiste[Letiště])
+			    MAXX(_Top, datadestinace[nazev])
 		displayFolder: 04. Insight Karty
 		lineageTag: m0000019-0000-4000-8000-000000000019
 
 	measure 'Top Destinace Popis' =
 			VAR _Name = [Top Destinace Nazev]
 			VAR _Total = [Pocet Letenek]
-			VAR _TopVal = CALCULATE([Pocet Letenek], Dim_Letiste[Letiště] = _Name)
+			VAR _TopVal = CALCULATE([Pocet Letenek], datadestinace[nazev] = _Name)
 			VAR _Share = DIVIDE(_TopVal, _Total, 0)
 			RETURN
 			    FORMAT(_TopVal, "#,0") & " prodaných letenek (" & FORMAT(_Share, "0.0 %") & " z celku)"

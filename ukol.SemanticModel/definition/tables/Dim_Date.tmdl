@@ -1,40 +1,39 @@
 table Dim_Date
 	lineageTag: e9386468-e290-43fe-ad62-74a1c87853f4
-	dataCategory: Time
 
 	column Date
-		dataType: dateTime
-		isKey
-		formatString: Short Date
+		formatString: General Date
 		lineageTag: 628d36bd-a368-4a4e-af58-7ab432ac9bf3
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Date]
 
+		variation Variation
+			isDefault
+			relationship: e9a2ee26-ed26-46bf-bc5a-a11b6da39836
+			defaultHierarchy: LocalDateTable_b6667d58-f91b-4802-bd62-9c6bd73be603.'Date Hierarchy'
+
 		annotation SummarizationSetBy = Automatic
 
 	column Rok
-		dataType: int64
 		formatString: 0
 		lineageTag: 6406de2f-0c03-4366-8fda-d626f3f1c284
-		summarizeBy: none
+		summarizeBy: sum
 		isNameInferred
 		sourceColumn: [Rok]
 
 		annotation SummarizationSetBy = Automatic
 
 	column CisloMesice
-		dataType: int64
 		formatString: 0
 		lineageTag: a434214a-1e41-4ab4-a807-c1dedf828beb
-		summarizeBy: none
+		summarizeBy: sum
 		isNameInferred
 		sourceColumn: [CisloMesice]
 
 		annotation SummarizationSetBy = Automatic
 
 	column Mesic
-		dataType: string
 		lineageTag: 8f070d97-ed3d-465d-8242-42c7182de72c
 		summarizeBy: none
 		isNameInferred
@@ -44,7 +43,6 @@ table Dim_Date
 		annotation SummarizationSetBy = Automatic
 
 	column MesicZkracene
-		dataType: string
 		lineageTag: d406a4f7-32f9-41b0-bd7c-66590199ee28
 		summarizeBy: none
 		isNameInferred
@@ -54,7 +52,6 @@ table Dim_Date
 		annotation SummarizationSetBy = Automatic
 
 	column RokMesicKod
-		dataType: int64
 		formatString: 0
 		lineageTag: cd438703-f08f-45ab-9ca7-6a56eec4e64b
 		summarizeBy: none
@@ -64,7 +61,6 @@ table Dim_Date
 		annotation SummarizationSetBy = Automatic
 
 	column RokMesicText
-		dataType: string
 		lineageTag: eb95606e-f5f0-476d-9680-c00f04b5f9f6
 		summarizeBy: none
 		isNameInferred
@@ -74,7 +70,6 @@ table Dim_Date
 		annotation SummarizationSetBy = Automatic
 
 	column Kvartal
-		dataType: string
 		lineageTag: 32e91036-017f-4b85-9448-2e6192181f0e
 		summarizeBy: none
 		isNameInferred
@@ -83,27 +78,24 @@ table Dim_Date
 		annotation SummarizationSetBy = Automatic
 
 	column CisloTydne
-		dataType: int64
 		formatString: 0
 		lineageTag: aaa525f6-78a1-47d6-ab20-f480872f693d
-		summarizeBy: none
+		summarizeBy: sum
 		isNameInferred
 		sourceColumn: [CisloTydne]
 
 		annotation SummarizationSetBy = Automatic
 
 	column DenVTydnuCislo
-		dataType: int64
 		formatString: 0
 		lineageTag: ad23a392-40c0-4864-a1a4-60cf8eb9d275
-		summarizeBy: none
+		summarizeBy: sum
 		isNameInferred
 		sourceColumn: [DenVTydnuCislo]
 
 		annotation SummarizationSetBy = Automatic
 
 	column DenVTydnu
-		dataType: string
 		lineageTag: 842ded7d-ab26-4640-9231-c36a8692aede
 		summarizeBy: none
 		isNameInferred
@@ -112,69 +104,73 @@ table Dim_Date
 		annotation SummarizationSetBy = Automatic
 
 	column JeVikend
-		dataType: int64
 		formatString: 0
 		lineageTag: 410954f5-fc86-43fd-895f-8b20c370630d
-		summarizeBy: none
+		summarizeBy: sum
 		isNameInferred
 		sourceColumn: [JeVikend]
 
 		annotation SummarizationSetBy = Automatic
 
 	column ZacatekMesice
-		dataType: dateTime
-		formatString: Short Date
+		formatString: General Date
 		lineageTag: 14fc0429-56e6-4a2c-aba0-d0d612bd0758
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [ZacatekMesice]
 
+		variation Variation
+			isDefault
+			relationship: 17e23242-41db-41f8-a16b-2e71a7639359
+			defaultHierarchy: LocalDateTable_df21cbf1-dba3-46a9-8082-bd3485a166cf.'Date Hierarchy'
+
 		annotation SummarizationSetBy = Automatic
 
 	column ZacatekPondeliTydne
-		dataType: dateTime
-		formatString: Short Date
+		formatString: General Date
 		lineageTag: 281ffa61-943a-450e-a490-61b244fc0510
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [ZacatekPondeliTydne]
+
+		variation Variation
+			isDefault
+			relationship: bc43b020-f288-47e2-b0f9-59b13837ec6a
+			defaultHierarchy: LocalDateTable_adee6681-1ccc-49b4-a2da-fff7866abb38.'Date Hierarchy'
 
 		annotation SummarizationSetBy = Automatic
 
 	partition Dim_Date = calculated
 		mode: import
 		source =
-				VAR _ActiveMonths =
-				    DISTINCT (
-				        SELECTCOLUMNS (
-				            FILTER ( dataCRM, NOT ISBLANK ( dataCRM[datum_rezervace] ) ),
-				            "YM", YEAR ( dataCRM[datum_rezervace] ) * 100 + MONTH ( dataCRM[datum_rezervace] )
-				        )
-				    )
-				VAR _MinDateCRM = MIN ( dataCRM[datum_rezervace] )
-				VAR _MaxDateCRM = MAX ( dataCRM[datum_rezervace] )
-				VAR _MinDate = DATE ( YEAR ( _MinDateCRM ), MONTH ( _MinDateCRM ), 1 )
-				VAR _MaxDate = EOMONTH ( _MaxDateCRM, 0 )
+				
+				VAR _MinDateCRM = MIN(dataCRM[datum_rezervace])
+				VAR _MinDateGA  = MIN(dataGA[date])
+				VAR _MinDateAds = MIN(dataAds[WeekGroup])
+				VAR _MinDate = DATE(YEAR(MIN(_MinDateCRM, MIN(_MinDateGA, _MinDateAds))), 1, 1)
+				
+				VAR _MaxDateCRM = MAX(dataCRM[datum_rezervace])
+				VAR _MaxDateGA  = MAX(dataGA[date])
+				VAR _MaxDateAds = MAX(dataAds[WeekGroup])
+				VAR _MaxDate = DATE(YEAR(MAX(_MaxDateCRM, MAX(_MaxDateGA, _MaxDateAds))), 12, 31)
+				
 				RETURN
-				    FILTER (
-				        ADDCOLUMNS (
-				            CALENDAR ( _MinDate, _MaxDate ),
-				            "Rok", YEAR ( [Date] ),
-				            "CisloMesice", MONTH ( [Date] ),
-				            "Mesic", FORMAT ( [Date], "MMMM", "cs-CZ" ),
-				            "MesicZkracene", FORMAT ( [Date], "MMM", "cs-CZ" ),
-				            "RokMesicKod", YEAR ( [Date] ) * 100 + MONTH ( [Date] ),
-				            "RokMesicText", FORMAT ( [Date], "yyyy-MM" ),
-				            "Kvartal", "Q" & FORMAT ( [Date], "Q" ),
-				            "CisloTydne", WEEKNUM ( [Date], 21 ),
-				            "DenVTydnuCislo", WEEKDAY ( [Date], 2 ),
-				            "DenVTydnu", FORMAT ( [Date], "dddd", "cs-CZ" ),
-				            "JeVikend", IF ( WEEKDAY ( [Date], 2 ) IN { 6, 7 }, 1, 0 ),
-				            "ZacatekMesice", DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ),
-				            "ZacatekPondeliTydne", [Date] - WEEKDAY ( [Date], 2 ) + 1
-				        ),
-				        [RokMesicKod] IN _ActiveMonths
-				    )
+				ADDCOLUMNS (
+				    CALENDAR(_MinDate, _MaxDate),
+				    "Rok", YEAR([Date]),
+				    "CisloMesice", MONTH([Date]),
+				    "Mesic", FORMAT([Date], "MMMM", "cs-CZ"),
+				    "MesicZkracene", FORMAT([Date], "MMM", "cs-CZ"),
+				    "RokMesicKod", YEAR([Date]) * 100 + MONTH([Date]),
+				    "RokMesicText", FORMAT([Date], "yyyy-MM"),
+				    "Kvartal", "Q" & FORMAT([Date], "Q"),
+				    "CisloTydne", WEEKNUM([Date], 21), -- ISO norma (týden začíná pondělím)
+				    "DenVTydnuCislo", WEEKDAY([Date], 2),
+				    "DenVTydnu", FORMAT([Date], "dddd", "cs-CZ"),
+				    "JeVikend", IF(WEEKDAY([Date], 2) IN {6, 7}, 1, 0),
+				    "ZacatekMesice", DATE(YEAR([Date]), MONTH([Date]), 1),
+				    "ZacatekPondeliTydne", [Date] - WEEKDAY([Date], 2) + 1
+				)
 
 	annotation PBI_Id = 1037fe2ee2d643999e8ead9e2d6caaf7
 

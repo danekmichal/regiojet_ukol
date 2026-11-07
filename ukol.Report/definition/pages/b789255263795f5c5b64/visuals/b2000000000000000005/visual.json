@@ -39,13 +39,13 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Dim_Letiste"
+                      "Entity": "datadestinace"
                     }
                   },
-                  "Property": "Letiště"
+                  "Property": "nazev"
                 }
               },
-              "queryRef": "Dim_Letiste.Letiště",
+              "queryRef": "datadestinace.nazev",
               "nativeQueryRef": "Letiště"
             }
           ]
